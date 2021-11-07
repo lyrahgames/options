@@ -1,0 +1,16 @@
+: 1
+name: lyrahgames-options
+version: 0.1.0-a.0.z
+project: lyrahgames
+summary: options C++ library
+license: GPL-3.0-or-later ; GNU General Public License v3.0 or later.
+
+description-file: README.md
+url: https://github.com/lyrahgames/options
+email: lyrahgames@mailbox.org
+#build-error-email: lyrahgames@mailbox.org
+
+depends: * build2 >= 0.14.0
+depends: * bpkg >= 0.14.0
+
+depends: lyrahgames-xstd == 0.1.3
