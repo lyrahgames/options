@@ -1,0 +1,140 @@
+$* --help >>EOE == 0
+--help
+EOE
+
+$* --version >>EOE == 0
+--version
+EOE
+
+$* --quiet >>EOE == 0
+--quiet
+EOE
+
+$* --help --version >>EOE == 0
+--help
+--version
+EOE
+
+$* --version --help >>EOE == 0
+--help
+--version
+EOE
+
+$* --version --quiet >>EOE == 0
+--version
+--quiet
+EOE
+
+$* --quiet --help >>EOE == 0
+--help
+--quiet
+EOE
+
+$* --quiet --version --help >>EOE == 0
+--help
+--version
+--quiet
+EOE
+
+$* --quit 2>>EOE != 0
+Unknown option '--quit'.
+EOE
+
+$* --quit --help 2>>EOE != 0
+Unknown option '--quit'.
+EOE
+
+$* help 2>>EOE != 0
+Given option 'help' is not a flag.
+EOE
+
+$* -h >>EOE == 0
+--help
+EOE
+
+$* -q >>EOE == 0
+--quiet
+EOE
+
+$* -h -q --version >>EOE == 0
+--help
+--version
+--quiet
+EOE
+
+$* --version -hq >>EOE == 0
+--help
+--version
+--quiet
+EOE
+
+$* -help 2>>EOE != 0
+Unknown short option 'e' in '-help'.
+EOE
+
+$* --input value >>EOE == 0
+--input value
+EOE
+
+$* --input 2>>EOE != 0
+No given value for option '--input'.
+EOE
+
+$* --input --help >>EOE == 0
+--input --help
+EOE
+
+$* --help --input --help >>EOE == 0
+--help
+--input --help
+EOE
+
+$* --output value >>EOE == 0
+--output value
+EOE
+
+$* --type value >>EOE == 0
+--type value
+EOE
+
+$* --type file --input in.txt --output out.txt >>EOE == 0
+--input in.txt
+--output out.txt
+--type file
+EOE
+
+$* -i in.txt --type file -o out.txt >>EOE == 0
+--input in.txt
+--output out.txt
+--type file
+EOE
+
+$* --type file -io in.txt out.txt >>EOE == 0
+--input in.txt
+--output out.txt
+--type file
+EOE
+
+$* -io in.txt 2>>EOE != 0
+No given value for short option 'o'.
+EOE
+
+$* --key=value >>EOE == 0
+--key value
+EOE
+
+$* --key value 2>>EOE != 0
+No assignment for option '--key'.
+EOE
+
+$* --key="value with spaces" --input "another value with spaces" >>EOE == 0
+--input another value with spaces
+--key value with spaces
+EOE
+
+$* --key=xyz -io "a b" "b c" >>EOE == 0
+--input a b
+--output b c
+--key xyz
+EOE
+

@@ -10,9 +10,10 @@ using namespace lyrahgames::options;
 using options = option_list<  //
     flag<"help", "Print the help message.", 'h'>,
     flag<"version", "Print the help message.">,
+    flag<"quiet", "Print the help message.", 'q'>,
     entry<"input", "Provide program input.", 'i'>,
     entry<"output", "Provide program output.", 'o'>,
-    entry<"middle", "Provide program output.">,
+    entry<"type", "Provide program type.">,
     assignment<"key", "Provide a key.">>;
 }  // namespace application
 application::options options{};
@@ -28,18 +29,25 @@ void print_options() {
 }
 
 int main(int argc, char** argv) {
-  // print_options();
-
   try {
     parse({argc, argv}, options);
-  } catch (lyrahgames::options::parse_error& e) {
-    cerr << "ERROR: " << e.what() << '\n';
-    // auto args = e.args();
-    // while (!args.empty()) cerr << args.pop_front() << ' ';
-    // cerr << endl;
+  } catch (exception& e) {
+    cerr << e.what() << '\n';
+    return -1;
   }
 
-  print_options();
+  if (value<"help">(options)) cout << "--help" << '\n';
+  if (value<"version">(options)) cout << "--version" << '\n';
+  if (value<"quiet">(options)) cout << "--quiet" << '\n';
 
-  cout << value<"key">(options) << '\n';
+  if (*value<"input">(options))
+    cout << "--input " << value<"input">(options) << '\n';
+  if (*value<"output">(options))
+    cout << "--output " << value<"output">(options) << '\n';
+  if (*value<"type">(options))
+    cout << "--type " << value<"type">(options) << '\n';
+
+  if (*value<"key">(options)) cout << "--key " << value<"key">(options) << '\n';
+  // print_options();
+  // cout << value<"key">(options) << '\n';
 }

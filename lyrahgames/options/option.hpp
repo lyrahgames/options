@@ -70,7 +70,10 @@ struct entry : entry<N, D, '\0'> {
   }
   constexpr bool parse(char c, arg_list& args) {
     if (c != short_name()) return false;
-    if (args.empty()) throw std::invalid_argument("No given value.");
+    if (args.empty()) {
+      throw std::invalid_argument(
+          std::string("No given value for short option '") + c + "'.");
+    }
     value = args.pop_front();
     return true;
   }
@@ -86,7 +89,11 @@ struct entry<N, D, '\0'> {
   }
   constexpr bool parse(czstring call, arg_list& args) {
     if (std::strcmp(call, name())) return false;
-    if (args.empty()) throw std::invalid_argument("No given value.");
+    if (args.empty()) {
+      args.unpop_front();
+      throw std::invalid_argument(std::string("No given value for option '") +
+                                  args.pop_front() + "'.");
+    }
     value = args.pop_front();
     return true;
   }
@@ -106,8 +113,11 @@ struct assignment {
     const auto tmp = name();  // Need this one due to optimization.
     czstring n = tmp;
     while (*n && *call && (*n == *call)) ++n, ++call;
-    if (!*n && !*call)
-      throw std::invalid_argument("No value in key-value pair.");
+    if (!*n && !*call) {
+      args.unpop_front();
+      throw std::invalid_argument(std::string("No assignment for option '") +
+                                  args.pop_front() + "'.");
+    }
     if (*n) return false;
     if (*call != '=') return false;
     value = call + 1;
