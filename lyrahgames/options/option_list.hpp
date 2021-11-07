@@ -85,12 +85,12 @@ constexpr decltype(auto) option(const option_list<types...>& options) {
 
 template <size_t index, typename... types>
 constexpr decltype(auto) value(option_list<types...>& options) {
-  return options.template option<index>().value;
+  return options.template option<index>().value();
 }
 
 template <static_zstring str, typename... types>
 constexpr decltype(auto) value(const option_list<types...>& options) {
-  return options.template option<str>().value;
+  return options.template option<str>().value();
 }
 
 }  // namespace lyrahgames::options

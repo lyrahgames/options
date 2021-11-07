@@ -9,9 +9,12 @@ namespace generic {
 using namespace lyrahgames::xstd::generic;
 
 template <typename T>
-concept option = requires(T x) {
+concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
   { T::name() } -> std::convertible_to<czstring>;
   { T::description() } -> std::convertible_to<czstring>;
+  { x.value() } -> identical<typename T::value_type&>;
+  { c.value() } -> std::convertible_to<typename T::value_type>;
+  { x.parse(call, args) } -> std::convertible_to<bool>;
 };
 
 template <typename T>
@@ -27,15 +30,18 @@ struct flag;
 
 template <static_zstring N, static_zstring D>
 struct flag<N, D, '\0'> {
+  using value_type = bool;
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
-  constexpr operator bool() { return value; }
+  constexpr operator bool() { return val; }
   constexpr auto help() { return static_zstring("--") + N; }
+  constexpr auto value() noexcept -> value_type& { return val; }
+  constexpr auto value() const noexcept -> value_type { return val; }
   constexpr bool parse(czstring call, arg_list& args) {
     if (std::strcmp(call, name())) return false;
-    return (value = true);
+    return (val = true);
   }
-  bool value{false};
+  bool val{false};
 };
 
 template <static_zstring N, static_zstring D, char S>
@@ -45,14 +51,16 @@ requires(S != '\0')  //
   using base::description;
   using base::name;
   using base::parse;
+  using base::val;
   using base::value;
+  using base::value_type;
   static constexpr auto short_name() { return S; }
   constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
   }
   constexpr bool parse(char c, arg_list& args) {
     if (c != short_name()) return false;
-    return (value = true);
+    return (val = true);
   }
 };
 
@@ -63,7 +71,9 @@ struct attachment : attachment<N, D, '\0'> {
   using base::description;
   using base::name;
   using base::parse;
+  using base::val;
   using base::value;
+  using base::value_type;
   static constexpr auto short_name() noexcept { return S; }
   constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
@@ -74,19 +84,22 @@ struct attachment : attachment<N, D, '\0'> {
       throw std::invalid_argument(
           std::string("No given value for short option '") + c + "'.");
     }
-    value = args.pop_front();
+    val = args.pop_front();
     return true;
   }
 };
 
 template <static_zstring N, static_zstring D>
 struct attachment<N, D, '\0'> {
+  using value_type = czstring;
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
-  constexpr operator czstring() { return value; }
+  constexpr operator czstring() { return val; }
   constexpr auto help() {
     return static_zstring("--") + N + static_zstring(" <value>");
   }
+  constexpr auto value() noexcept -> value_type& { return val; }
+  constexpr auto value() const noexcept -> value_type { return val; }
   constexpr bool parse(czstring call, arg_list& args) {
     if (std::strcmp(call, name())) return false;
     if (args.empty()) {
@@ -94,21 +107,24 @@ struct attachment<N, D, '\0'> {
       throw std::invalid_argument(std::string("No given value for option '") +
                                   args.pop_front() + "'.");
     }
-    value = args.pop_front();
+    val = args.pop_front();
     return true;
   }
-  czstring value = "";
+  czstring val = "";
 };
 
 // --key=value
 template <static_zstring N, static_zstring D>
 struct assignment {
+  using value_type = czstring;
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
-  constexpr operator czstring() { return value; }
+  constexpr operator czstring() { return val; }
   constexpr auto help() {
     return static_zstring("--") + N + static_zstring("=VALUE");
   }
+  constexpr auto value() noexcept -> value_type& { return val; }
+  constexpr auto value() const noexcept -> value_type { return val; }
   constexpr bool parse(czstring call, arg_list& args) {
     const auto tmp = name();  // Need this one due to optimization.
     czstring n = tmp;
@@ -120,10 +136,10 @@ struct assignment {
     }
     if (*n) return false;
     if (*call != '=') return false;
-    value = call + 1;
+    val = call + 1;
     return true;
   }
-  czstring value = "";
+  czstring val = "";
 };
 
 }  // namespace lyrahgames::options

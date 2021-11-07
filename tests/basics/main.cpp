@@ -22,7 +22,7 @@ void print_options() {
   for_each(options, [](auto& x) {
     cout << left << setw(20) << x.help() << '\n'
          << '\t' << setw(40) << x.description() << boolalpha << setw(8)
-         << x.value << '\n'
+         << x.value() << '\n'
          << '\n';
   });
   cout << endl;
