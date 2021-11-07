@@ -134,18 +134,19 @@
 
 ```c++
 #include <iostream>
+#include <iomanip>
+//
 #include <lyrahgames/options/options.hpp>
 
 using namespace std;
-using namespace lyrahgames;
 
 namespace application{
-  using namespace options;
+  using namespace lyrahgames::options;
   using options = option_list<
     flag<"help", "Print the help message.", 'h'>,
     flag<"version", "Print the program version.">,
-    value<"input", "Provide an input file path.", 'i'>,
-    assign<"key", "Assign a key.">>;
+    attachment<"input", "Provide an input file path.", 'i'>,
+    assignment<"key", "Assign a key.">>;
 }
 application::options options{};
 

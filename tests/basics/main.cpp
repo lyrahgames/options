@@ -11,9 +11,9 @@ using options = option_list<  //
     flag<"help", "Print the help message.", 'h'>,
     flag<"version", "Print the help message.">,
     flag<"quiet", "Print the help message.", 'q'>,
-    entry<"input", "Provide program input.", 'i'>,
-    entry<"output", "Provide program output.", 'o'>,
-    entry<"type", "Provide program type.">,
+    attachment<"input", "Provide program input.", 'i'>,
+    attachment<"output", "Provide program output.", 'o'>,
+    attachment<"type", "Provide program type.">,
     assignment<"key", "Provide a key.">>;
 }  // namespace application
 application::options options{};

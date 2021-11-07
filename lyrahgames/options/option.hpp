@@ -58,8 +58,8 @@ requires(S != '\0')  //
 
 // --flag value
 template <static_zstring N, static_zstring D, char S = '\0'>
-struct entry : entry<N, D, '\0'> {
-  using base = entry<N, D, '\0'>;
+struct attachment : attachment<N, D, '\0'> {
+  using base = attachment<N, D, '\0'>;
   using base::description;
   using base::name;
   using base::parse;
@@ -80,7 +80,7 @@ struct entry : entry<N, D, '\0'> {
 };
 
 template <static_zstring N, static_zstring D>
-struct entry<N, D, '\0'> {
+struct attachment<N, D, '\0'> {
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
   constexpr operator czstring() { return value; }
