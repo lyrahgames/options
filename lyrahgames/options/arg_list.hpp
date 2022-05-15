@@ -1,5 +1,5 @@
 #pragma once
-#include <lyrahgames/options/static_zstring.hpp>
+#include <lyrahgames/options/utility.hpp>
 
 namespace lyrahgames::options {
 

@@ -1,6 +1,4 @@
 #pragma once
-#include <cstring>
-//
 #include <lyrahgames/options/arg_list.hpp>
 
 namespace lyrahgames::options {
