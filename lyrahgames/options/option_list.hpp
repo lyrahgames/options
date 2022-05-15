@@ -1,6 +1,4 @@
 #pragma once
-#include <lyrahgames/xstd/forward.hpp>
-//
 #include <lyrahgames/options/option.hpp>
 
 namespace lyrahgames::options {

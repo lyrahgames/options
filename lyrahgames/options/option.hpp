@@ -51,7 +51,7 @@ requires(S != '\0')  //
   using base::parse;
   using base::val;
   using base::value;
-  using base::value_type;
+  using typename base::value_type;
   static constexpr auto short_name() { return S; }
   constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
@@ -71,7 +71,7 @@ struct attachment : attachment<N, D, '\0'> {
   using base::parse;
   using base::val;
   using base::value;
-  using base::value_type;
+  using typename base::value_type;
   static constexpr auto short_name() noexcept { return S; }
   constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
