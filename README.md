@@ -210,3 +210,11 @@ If your package uses an explicit `depends: lyrahgames-options` make sure to init
 ## Alternative Usage
 To use other build systems or manual compilation, you only have to add the `lyrahgames/options/` directory to your project and include it in the compilation process.
 
+## Background
+- Simple Parsing L(k)
+- Efficient Storage
+- Easy Naming and access
+- extendable
+- only bool and czstring useful: do not parse everything
+- Compile-time, static
+- flags, attachments, assignments
