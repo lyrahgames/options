@@ -6,36 +6,61 @@ namespace lyrahgames::options {
 /// Algorithm for iterating statically over every option in an option list
 /// and applying the given function object.
 // Sentinel function at the end which is doing nothing.
-template <size_t N, typename function, typename... types>
-requires(N >= sizeof...(types))  //
-    constexpr void for_each(option_list<types...>& options, function&& f) {}
+
+// template <size_t N, typename function, typename... types>
+// requires(N >= sizeof...(types))  //
+//     constexpr void for_each(option_list<types...>& options, function&& f) {}
+
 // This function applies the function object to the current option
 // and afterwards goes on with the loop for all tail options.
-template <size_t N = 0, typename function, typename... types>
-requires(N < sizeof...(types))  //
-    constexpr void for_each(option_list<types...>& options, function&& f) {
-  f(option<N>(options));
-  for_each<N + 1>(options, std::forward<function>(f));
+
+// template <size_t N = 0, typename function, typename... types>
+// requires(N < sizeof...(types))  //
+//     constexpr void for_each(option_list<types...>& options, function&& f) {
+//   f(option<N>(options));
+//   for_each<N + 1>(options, std::forward<function>(f));
+// }
+
+template <size_t index = 0>
+constexpr void for_each(auto&& options, auto&& functor) {
+  if constexpr (index < std::decay_t<decltype(options)>::size()) {
+    functor(option<index>(options));
+    for_each<index + 1>(std::forward<decltype(options)>(options),
+                        std::forward<decltype(functor)>(functor));
+  }
 }
 
 /// Algorithm for iterating statically over every option in an option list
 /// and applying the given function object until it returns true for the first time.
 /// The algorithm returns the index at which it stopped.
 // Sentinel function returning end index.
-template <size_t N, typename function, typename... types>
-requires(N >= sizeof...(types))  //
-    constexpr auto for_each_until(option_list<types...>& options, function&& f)
-        -> size_t {
-  return sizeof...(types);
-}
+
+// template <size_t N, typename function, typename... types>
+// requires(N >= sizeof...(types))  //
+//     constexpr auto for_each_until(option_list<types...>& options, function&& f)
+//         -> size_t {
+//   return sizeof...(types);
+// }
+
 // Calls function object on current option and checks output.
 // If false, go on with the loop.
-template <size_t N = 0, typename function, typename... types>
-requires(N < sizeof...(types))  //
-    constexpr auto for_each_until(option_list<types...>& options, function&& f)
-        -> size_t {
-  if (f(option<N>(options))) return N;
-  return for_each_until<N + 1>(options, std::forward<function>(f));
+
+// template <size_t N = 0, typename function, typename... types>
+// requires(N < sizeof...(types))  //
+//     constexpr auto for_each_until(option_list<types...>& options, function&& f)
+//         -> size_t {
+//   if (f(option<N>(options))) return N;
+//   return for_each_until<N + 1>(options, std::forward<function>(f));
+// }
+
+template <size_t index = 0>
+constexpr auto for_each_until(auto&& options, auto&& functor) -> size_t {
+  if constexpr (index < std::decay_t<decltype(options)>::size()) {
+    if (functor(option<index>(options))) return index;
+    return for_each_until<index + 1>(std::forward<decltype(options)>(options),
+                                     std::forward<decltype(functor)>(functor));
+  }
+  return index;
 }
 
 }  // namespace lyrahgames::options
