@@ -218,3 +218,4 @@ To use other build systems or manual compilation, you only have to add the `lyra
 - only bool and czstring useful: do not parse everything
 - Compile-time, static
 - flags, attachments, assignments
+- Currently, no free-form/positional arguments

@@ -27,6 +27,16 @@ concept has_short_name = requires(T x) {
 template <static_zstring name>
 constexpr bool unknown = false;
 
+// We need a type-dependent expression that is always false
+// to provide useful compile-time error messages with static_assert.
+template <size_t index>
+constexpr bool out_of_bounds = false;
+
+/// Sentinel type for better compile-time error messages.
+struct invalid_option {
+  constexpr bool value() { return false; }
+};
+
 // Creating your own option_list provides advantages instead of using std::tuple.
 // First, ADL is enabled for get and value routine.
 
@@ -41,14 +51,24 @@ struct option_list<> {
   constexpr option_list() = default;
 
   template <size_t index>
-  constexpr auto option() const noexcept = delete;
+  // constexpr auto option() const noexcept = delete;
+  constexpr auto option() const {
+    static_assert(out_of_bounds<index>, "Given option index out of bounds");
+    // Accessing the value of option provides other not useful
+    // error messages besides from the static assertion.
+    // Using this sentinel type with a value member function is a workaround.
+    return invalid_option{};
+  }
 
   template <static_zstring name>
-  constexpr auto option() const noexcept = delete;
-  // constexpr decltype(auto) option() const {
-  //   static_assert(unknown<name>, "Unknown option name");
-  //   return *this;
-  // }
+  // constexpr auto option() const noexcept = delete;
+  constexpr auto option() const {
+    static_assert(unknown<name>, "Unknown option name");
+    // Accessing the value of option provides other not useful
+    // error messages besides from the static assertion.
+    // Using this sentinel type with a value member function is a workaround.
+    return invalid_option{};
+  }
 
   static constexpr auto size() noexcept -> size_t { return 0; }
 };
