@@ -336,18 +336,27 @@ int main(int argc, char* argv[]) {
 
 It is obvious that this design technique will become error-prone quite fast.
 Additionally, it looks really generic and it should be possible to automatically generate such code for a given list of flags.
+The provided library is trying to do exactly this.
 
-- Why no callbacks for flags? -> live execution is bad, you want to keep the state of parsed flags, does not give you any performance, code more difficult to reason about
-- Simple Parsing L(k): Right now, it is string comparison. This seems to be fast enough. Otherwise, we could use a radix tree for name checking.
-- Efficient Storage
-- Easy Naming and access
-- extendable
-- only bool and czstring useful: do not parse everything
-- Compile-time, static
-- flags, attachments, assignments
-- Currently, no free-form/positional arguments
+### Properties:
+- Header-Only Library
+- No dynamic names for flags which would have to be provided inside a hash map
+- Consistent access to values of program options which behaves like using the variable name directly: `value<"help">(options)`
+- Extendable by other option types
+- Simple Flag Switches: `--help`
+- Attachments: `--input <value>`
+- Assignments: `--key=<value>`
 
-Assumptions
-- not too many arguments (compiler flags are quite strange)
-- completely static and nothing is dynamic
-- simple parsing is fast enough
+### To Do:
+- Free-Form/Positional Arguments
+- Grouping of program options for formatting and more efficient storage utilization
+- Formatting of help messages
+- Compile-time checks for valid option names
+
+### Assumptions
+- Program options are handled inside the source code and not loaded dynamically by a configuration file.
+- The count of different program options should not be too large such that they are actually manageable inside an option list in a single file. Compilers, like GCC and Clang, would be a counterexample.
+- The parsing of program options should not be the bottleneck of the program. Currently, a simple string comparison with a linear search is used to find and parse arguments. For a relatively small set of options, this may indeed be the fastest alternative. A static radix tree implementation could make this point obsolete but may not be worth the effort.
+- The storage of program options should not be critical. Every option that only provides a simple switch is represented by a whole `bool` variable. It is possible to change that but may not be worth the effort. Options, like attachments and assignments, are indeed stored quite efficiently by a simple pointer.
+- Complicated parsing for specific option types, that may be based on enumerations, should not be done inside the program options parser but instead afterwards by a custom parser. Typically, only boolean and string variables will be needed by the program options state. But still it is possible to implement custom option types which could automatically parse more difficult representations.
+- The parsing of program options should not involve any callbacks provided by the user that are called when a specific option has been recognized. The live execution of a callback would dictate a specific execution order and would make it impossible to catch parser errors before running those callbacks. A separation of parsing and execution may be superior. The source code is easier to reason about. The execution order can be adjusted. Parser errors can be filtered out and we can keep the state of all the program options. Furthermore, using callbacks will most likely not give you any better performance.
