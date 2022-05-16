@@ -15,6 +15,8 @@ struct arg_list {
 
   /// Constructor used to construct the stream directly
   /// from the arguments of the main function.
+  /// The values of 'argv' will not be copied and
+  /// should not be altered after calling the constructor.
   /// Providing an index should be used to set the count
   /// of already processed arguments.
   /// This enables us to also recursively handle multiple parsing strategies.
