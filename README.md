@@ -133,39 +133,104 @@
 ## Getting Started
 
 ```c++
-#include <iostream>
+#include <fstream>
 #include <iomanip>
+#include <iostream>
 //
 #include <lyrahgames/options/options.hpp>
 
+// This application is able to print
+// the content of a file to the command line.
+// The application does exist at all times.
+// We use a namespace singleton to make this clear.
+// Also, a class could be used.
+namespace application {
+
+// Inside the application, we want the standard stuff to be available.
 using namespace std;
+using namespace lyrahgames;
 
-namespace application{
-  using namespace lyrahgames::options;
-  using options = option_list<
+// Simple logging strategy for the application.
+// For this example, it should also be available as namespace singleton.
+namespace log {
+void info(auto&& x) {
+  cout << "INFO:  " << forward<decltype(x)>(x) << endl;
+}
+void error(auto&& x) {
+  cerr << "ERROR: " << forward<decltype(x)>(x) << endl;
+}
+}  // namespace log
+
+// Provide the list of program options and
+// the variable which is able to store their values.
+using namespace options;
+option_list<  //
     flag<"help", "Print the help message.", 'h'>,
-    flag<"version", "Print the program version.">,
-    attachment<"input", "Provide an input file path.", 'i'>,
-    assignment<"key", "Assign a key.">>;
-}
-application::options options{};
+    flag<"version", "Print the library version.">,
+    attachment<"input", "Provide an input file.", 'i'>>
+    options{};
 
-void print_options() {
-  for_each(options, [](auto& x) {
-    cout << left << setw(20) << x.help() << '\n'
-         << '\t' << setw(40) << x.description() << boolalpha << setw(8)
-         << x.value << '\n'
-         << '\n';
-  });
-  cout << endl;
+// Initialize the application by parsing its command-line arguments.
+void init(int argc, char* argv[]) {
+  try {
+    parse({argc, argv}, options);
+  } catch (options::parser_error& e) {
+    log::error(e.what());
+    exit(-1);
+  }
 }
+
+// Run the actual application by interpreting the provided values.
+void run() {
+  // Provide a custom help message.
+  if (value<"help">(options)) {
+    cout << "This program is a simple test for the lyrahgames' options\n"
+            "library and outputs a given file on the command line.\n"
+         << endl;
+    for_each(options, [](auto& option) {
+      cout << left << setw(25) << option.help() << option.description() << endl;
+    });
+    exit(0);
+  }
+
+  // Provide the library version.
+  if (value<"version">(options)) {
+    cout << "Version " LYRAHGAMES_OPTIONS_VERSION_STR << endl;
+    exit(0);
+  }
+
+  // Check for given input file in other cases.
+  if (!value<"input">(options)) {
+    log::error("No input file provided.");
+    exit(-1);
+  }
+
+  // Open file and output it on the command line.
+  fstream file{value<"input">(options), ios::in};
+  string line;
+  while (getline(file, line)) cout << line << endl;
+}
+
+}  // namespace application
 
 int main(int argc, char* argv[]) {
-  parse({argc, argv}, options);
-  print_options();
-  cout << "key = " << value<"key">(options) << '\n';
+  application::init(argc, argv);
+  application::run();
 }
 ```
+
+Example Output:
+```
+$ ./program --help
+This program is a simple test for the lyrahgames' options
+library and outputs a given file on the command line.
+
+-h, --help               Print the help message.
+--version                Print the library version.
+-i, --input <value>      Provide an input file.
+
+```
+
 
 ## Usage with build2
 Add this repository to the `repositories.manifest` file of your build2 package.
