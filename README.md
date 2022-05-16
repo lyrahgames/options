@@ -228,9 +228,7 @@ library and outputs a given file on the command line.
 -h, --help               Print the help message.
 --version                Print the library version.
 -i, --input <value>      Provide an input file.
-
 ```
-
 
 ## Usage with build2
 Add this repository to the `repositories.manifest` file of your build2 package.
@@ -276,6 +274,70 @@ If your package uses an explicit `depends: lyrahgames-options` make sure to init
 To use other build systems or manual compilation, you only have to add the `lyrahgames/options/` directory to your project and include it in the compilation process.
 
 ## Background
+Assume, we would like to create a program which is able to accept the three flags `--help`, `--version`, and `--input` on the command line.
+Hereby, `--help` and `--version` shall not provide any further arguments but only indicate that the help message or the version string should be printed on the screen.
+Instead, the `--input` flag requires a subsequent argument to provide a file path to be read.
+A simple way to manually implement these flags for the program is given in the following code snippet.
+
+```c++
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// State Variables for Program Options
+bool help_flag = false;
+bool version_flag = false;
+const char* input_flag = nullptr;
+
+// Custom Implementation
+void print_help() { ... }
+void print_version() { ... }
+void print_file(const char* path) { ... }
+
+int main(int argc, char* argv[]) {
+    // Parse argv into the program option state.
+    int i = 1;
+    while (i < argc) {
+        if (strcmp(argv[i], "--help"))
+            help_flag = true;
+        else if (strcmp(argv[i], "--version"))
+            version_flag = true;
+        else if (strcmp(argv[i], "--input")){
+            ++i;
+            if (i >= argc) {
+                cerr << "ERROR: No given value for option '--input'." << endl;
+                exit(-1);
+            }
+            input_flag = argv[i];
+        } else {
+            cerr << "ERROR: Unknown option " << argv[i] << endl;
+            exit(-1);
+        }
+        ++i;
+    }
+
+    // After parsing, run the code by using the program option state.
+    if (help_flag) {
+        print_help();
+        exit(0);
+    }
+    if (version_flag) {
+        print_version();
+        exit(0);
+    }
+    if (!input_flag) {
+        cerr << "ERROR: No input file provided." << endl;
+        exit(-1);
+    }
+    print_file(input_flag);
+}
+```
+
+It is obvious that this design technique will become error-prone quite fast.
+Additionally, it looks really generic and it should be possible to automatically generate such code for a given list of flags.
+
+- Why no callbacks for flags? -> live execution is bad, you want to keep the state of parsed flags, does not give you any performance, code more difficult to reason about
 - Simple Parsing L(k): Right now, it is string comparison. This seems to be fast enough. Otherwise, we could use a radix tree for name checking.
 - Efficient Storage
 - Easy Naming and access
