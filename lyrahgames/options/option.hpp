@@ -32,7 +32,7 @@ struct flag<N, D, '\0'> {
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
   constexpr operator bool() { return val; }
-  constexpr auto help() { return static_zstring("--") + N; }
+  static constexpr auto help() { return static_zstring("--") + N; }
   constexpr auto value() noexcept -> value_type& { return val; }
   constexpr auto value() const noexcept -> value_type { return val; }
   constexpr bool parse(czstring call, arg_list& args) {
@@ -53,7 +53,7 @@ requires(S != '\0')  //
   using base::value;
   using typename base::value_type;
   static constexpr auto short_name() { return S; }
-  constexpr auto help() {
+  static constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
   }
   constexpr bool parse(char c, arg_list& args) {
@@ -73,7 +73,7 @@ struct attachment : attachment<N, D, '\0'> {
   using base::value;
   using typename base::value_type;
   static constexpr auto short_name() noexcept { return S; }
-  constexpr auto help() {
+  static constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
   }
   constexpr bool parse(char c, arg_list& args) {
@@ -93,7 +93,7 @@ struct attachment<N, D, '\0'> {
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
   constexpr operator czstring() { return val; }
-  constexpr auto help() {
+  static constexpr auto help() {
     return static_zstring("--") + N + static_zstring(" <value>");
   }
   constexpr auto value() noexcept -> value_type& { return val; }
@@ -118,7 +118,7 @@ struct assignment {
   static constexpr auto name() { return N; }
   static constexpr auto description() { return D; }
   constexpr operator czstring() { return val; }
-  constexpr auto help() {
+  static constexpr auto help() {
     return static_zstring("--") + N + static_zstring("=VALUE");
   }
   constexpr auto value() noexcept -> value_type& { return val; }

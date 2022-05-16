@@ -4,22 +4,23 @@
 #include <lyrahgames/options/options.hpp>
 
 using namespace std;
+using namespace lyrahgames;
 
 namespace application {
-using namespace lyrahgames::options;
-using options = option_list<  //
+using namespace options;
+option_list<  //
     flag<"help", "Print the help message.", 'h'>,
     flag<"version", "Print the help message.">,
     flag<"quiet", "Print the help message.", 'q'>,
     attachment<"input", "Provide program input.", 'i'>,
     attachment<"output", "Provide program output.", 'o'>,
     attachment<"type", "Provide program type.">,
-    assignment<"key", "Provide a key.">>;
+    assignment<"key", "Provide a key.">>
+    options{};
 }  // namespace application
-application::options options{};
 
 void print_options() {
-  for_each(options, [](auto& x) {
+  for_each(application::options, [](const auto& x) {
     cout << left << setw(20) << x.help() << '\n'
          << '\t' << setw(40) << x.description() << boolalpha << setw(8)
          << x.value() << '\n'
@@ -29,6 +30,8 @@ void print_options() {
 }
 
 int main(int argc, char** argv) {
+  using application::options;
+
   try {
     parse({argc, argv}, options);
   } catch (exception& e) {
