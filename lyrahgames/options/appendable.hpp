@@ -52,7 +52,7 @@ struct appendable<N, D, '\0'> {
 
   constexpr auto value() noexcept -> value_type& { return val; }
 
-  constexpr auto value() const noexcept -> value_type { return val; }
+  constexpr auto value() const noexcept -> const value_type& { return val; }
 
   constexpr bool parse(czstring call, arg_list& args) {
     if (strcmp(call, name())) return false;
