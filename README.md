@@ -211,7 +211,7 @@ If your package uses an explicit `depends: lyrahgames-options` make sure to init
 To use other build systems or manual compilation, you only have to add the `lyrahgames/options/` directory to your project and include it in the compilation process.
 
 ## Background
-- Simple Parsing L(k)
+- Simple Parsing L(k): Right now, it is string comparison. This seems to be fast enough. Otherwise, we could use a radix tree for name checking.
 - Efficient Storage
 - Easy Naming and access
 - extendable

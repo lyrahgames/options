@@ -3,7 +3,10 @@
 
 namespace lyrahgames::options {
 
-// --flag value
+/// Option type for list of options which also provides one additional value.
+/// Usage: --flag value
+
+/// Short Name Alternative
 template <static_zstring N, static_zstring D, char S = '\0'>
 struct attachment : attachment<N, D, '\0'> {
   using base = attachment<N, D, '\0'>;
@@ -13,10 +16,13 @@ struct attachment : attachment<N, D, '\0'> {
   using base::val;
   using base::value;
   using typename base::value_type;
+
   static constexpr auto short_name() noexcept { return S; }
+
   static constexpr auto help() {
     return static_zstring("-") + S + static_zstring(", ") + base::help();
   }
+
   constexpr bool parse(char c, arg_list& args) {
     if (c != short_name()) return false;
     if (args.empty()) {
@@ -28,17 +34,25 @@ struct attachment : attachment<N, D, '\0'> {
   }
 };
 
+/// Base Implementation
 template <static_zstring N, static_zstring D>
 struct attachment<N, D, '\0'> {
   using value_type = czstring;
+
   static constexpr auto name() { return N; }
+
   static constexpr auto description() { return D; }
-  constexpr operator czstring() { return val; }
+
   static constexpr auto help() {
     return static_zstring("--") + N + static_zstring(" <value>");
   }
+
+  constexpr operator czstring() { return val; }
+
   constexpr auto value() noexcept -> value_type& { return val; }
+
   constexpr auto value() const noexcept -> value_type { return val; }
+
   constexpr bool parse(czstring call, arg_list& args) {
     if (std::strcmp(call, name())) return false;
     if (args.empty()) {
@@ -49,6 +63,7 @@ struct attachment<N, D, '\0'> {
     val = args.pop_front();
     return true;
   }
+
   czstring val = "";
 };
 

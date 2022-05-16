@@ -3,18 +3,27 @@
 
 namespace lyrahgames::options {
 
-// --key=value
+/// Option type for list of options which also provides one additional value.
+/// Usage: --key=value
+
 template <static_zstring N, static_zstring D>
 struct assignment {
   using value_type = czstring;
+
   static constexpr auto name() { return N; }
+
   static constexpr auto description() { return D; }
-  constexpr operator czstring() { return val; }
+
   static constexpr auto help() {
     return static_zstring("--") + N + static_zstring("=VALUE");
   }
+
+  constexpr operator czstring() { return val; }
+
   constexpr auto value() noexcept -> value_type& { return val; }
+
   constexpr auto value() const noexcept -> value_type { return val; }
+
   constexpr bool parse(czstring call, arg_list& args) {
     const auto tmp = name();  // Need this one due to optimization.
     czstring n = tmp;
@@ -29,6 +38,7 @@ struct assignment {
     val = call + 1;
     return true;
   }
+
   czstring val = "";
 };
 
