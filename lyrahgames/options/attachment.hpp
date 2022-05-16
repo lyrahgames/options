@@ -49,6 +49,8 @@ struct attachment<N, D, '\0'> {
 
   constexpr operator czstring() { return val; }
 
+  constexpr operator bool() { return val; }
+
   constexpr auto value() noexcept -> value_type& { return val; }
 
   constexpr auto value() const noexcept -> value_type { return val; }
@@ -64,7 +66,7 @@ struct attachment<N, D, '\0'> {
     return true;
   }
 
-  czstring val = nullptr;
+  value_type val = nullptr;
 };
 
 }  // namespace lyrahgames::options

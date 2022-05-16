@@ -56,7 +56,7 @@ struct flag<N, D, '\0'> {
     return (val = true);
   }
 
-  bool val{false};
+  value_type val{false};
 };
 
 }  // namespace lyrahgames::options
