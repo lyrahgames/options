@@ -22,9 +22,13 @@ option_list<  //
 void print_options() {
   for_each(application::options, [](const auto& x) {
     cout << left << setw(20) << x.help() << '\n'
-         << '\t' << setw(40) << x.description() << boolalpha << setw(8)
-         << x.value() << '\n'
-         << '\n';
+         << '\t' << setw(40) << x.description() << boolalpha << setw(8);
+    if (x.value())
+      cout << x.value();
+    else
+      cout << "---";
+
+    cout << '\n' << '\n';
   });
   cout << endl;
 }
@@ -45,14 +49,14 @@ int main(int argc, char** argv) {
   if (value<"version">(options)) cout << "--version" << '\n';
   if (value<"quiet">(options)) cout << "--quiet" << '\n';
 
-  if (*value<"input">(options))
+  if (value<"input">(options))
     cout << "--input " << value<"input">(options) << '\n';
-  if (*value<"output">(options))
+  if (value<"output">(options))
     cout << "--output " << value<"output">(options) << '\n';
-  if (*value<"type">(options))
+  if (value<"type">(options))
     cout << "--type " << value<"type">(options) << '\n';
 
-  if (*value<"key">(options)) cout << "--key " << value<"key">(options) << '\n';
+  if (value<"key">(options)) cout << "--key " << value<"key">(options) << '\n';
   // print_options();
   // cout << value<"key">(options) << '\n';
 }

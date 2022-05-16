@@ -64,7 +64,7 @@ struct attachment<N, D, '\0'> {
     return true;
   }
 
-  czstring val = "";
+  czstring val = nullptr;
 };
 
 }  // namespace lyrahgames::options

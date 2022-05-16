@@ -39,7 +39,7 @@ struct assignment {
     return true;
   }
 
-  czstring val = "";
+  czstring val = nullptr;
 };
 
 }  // namespace lyrahgames::options
