@@ -36,6 +36,8 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  // value<"test">(options);
+
   if (value<"help">(options)) cout << "--help" << '\n';
   if (value<"version">(options)) cout << "--version" << '\n';
   if (value<"quiet">(options)) cout << "--quiet" << '\n';
