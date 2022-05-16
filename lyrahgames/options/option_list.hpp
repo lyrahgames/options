@@ -126,4 +126,28 @@ constexpr decltype(auto) value(auto&& options) {
       .value();
 }
 
+/// Algorithm for iterating statically over every option in an option list
+/// and applying the given function object.
+template <size_t index = 0>
+constexpr void for_each(auto&& options, auto&& functor) {
+  if constexpr (index < std::decay_t<decltype(options)>::size()) {
+    functor(option<index>(options));
+    for_each<index + 1>(std::forward<decltype(options)>(options),
+                        std::forward<decltype(functor)>(functor));
+  }
+}
+
+/// Algorithm for iterating statically over every option in an option list
+/// and applying the given function object until it returns true for the first time.
+/// The algorithm returns the index at which it stopped.
+template <size_t index = 0>
+constexpr auto for_each_until(auto&& options, auto&& functor) -> size_t {
+  if constexpr (index < std::decay_t<decltype(options)>::size()) {
+    if (functor(option<index>(options))) return index;
+    return for_each_until<index + 1>(std::forward<decltype(options)>(options),
+                                     std::forward<decltype(functor)>(functor));
+  }
+  return index;
+}
+
 }  // namespace lyrahgames::options
