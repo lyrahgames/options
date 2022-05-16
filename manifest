@@ -2,7 +2,7 @@
 name: lyrahgames-options
 version: 0.1.2-a.0.z
 project: lyrahgames
-summary: options C++ library
+summary: C++ Header-Only Library for Program Options
 license: GPL-3.0-or-later ; GNU General Public License v3.0 or later.
 
 description-file: README.md
