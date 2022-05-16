@@ -9,6 +9,7 @@
 
 namespace lyrahgames::options {
 
+using namespace std;
 using namespace xstd;
 
 namespace generic {

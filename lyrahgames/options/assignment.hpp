@@ -30,8 +30,8 @@ struct assignment {
     while (*n && *call && (*n == *call)) ++n, ++call;
     if (!*n && !*call) {
       args.unpop_front();
-      throw parser_error(args, std::string("No assignment for option '") +
-                                   args.pop_front() + "'.");
+      throw parser_error(
+          args, string("No assignment for option '") + args.pop_front() + "'.");
     }
     if (*n) return false;
     if (*call != '=') return false;

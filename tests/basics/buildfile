@@ -1,3 +1,1 @@
-import libs = lyrahgames-options%lib{lyrahgames-options}
-
 exe{tests}: {hxx ixx txx cxx}{**} $libs testscript

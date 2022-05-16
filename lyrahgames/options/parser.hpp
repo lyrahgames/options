@@ -8,19 +8,18 @@ namespace lyrahgames::options {
 /// It also provides the currently processed 'arg_list'.
 /// So, after catching the exception
 /// it can be used to go on with the parsing.
-struct parser_error : std::exception {
+struct parser_error : exception {
   parser_error() = default;
 
   /// Constructor to provide list of arguments and an error message.
-  parser_error(const arg_list& args,
-               generic::forwardable<std::string> auto&& text)
-      : state{args}, msg{std::forward<std::string>(text)} {}
+  parser_error(const arg_list& args, generic::forwardable<string> auto&& text)
+      : state{args}, msg{forward<string>(text)} {}
 
   auto what() const noexcept -> czstring override { return msg.c_str(); }
   auto args() const noexcept -> const arg_list& { return state; }
 
  private:
-  std::string msg{};
+  string msg{};
   arg_list state{};
 };
 
@@ -60,7 +59,7 @@ constexpr bool parse_short_options(arg_list& args,
     // If no option provides this short name, throw an exception.
     if (index >= options.size()) {
       args.unpop_front();
-      throw parser_error(args, std::string("Unknown short option '") + *arg +
+      throw parser_error(args, string("Unknown short option '") + *arg +
                                    "' in '" + current + "'.");
     }
   }
@@ -78,7 +77,7 @@ constexpr bool parse_option(arg_list& args, auto& options, czstring current) {
   // Throw an exception if no option with the given name exists.
   if (index >= options.size()) {
     args.unpop_front();
-    throw parser_error(args, std::string("Unknown option '") + current + "'.");
+    throw parser_error(args, string("Unknown option '") + current + "'.");
   }
   return true;
 }
@@ -99,8 +98,8 @@ constexpr void parse(arg_list args, auto& options) {
     if (parse_option(args, options, current)) continue;
     // Handle arguments that are no short option nor flag by an excption.
     args.unpop_front();
-    throw parser_error(
-        args, std::string("Given option '") + current + "' is not a flag.");
+    throw parser_error(args,
+                       string("Given option '") + current + "' is not a flag.");
   }
 }
 

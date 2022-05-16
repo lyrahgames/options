@@ -52,7 +52,7 @@ struct flag<N, D, '\0'> {
   constexpr auto value() const noexcept -> value_type { return val; }
 
   constexpr bool parse(czstring call, arg_list& args) {
-    if (std::strcmp(call, name())) return false;
+    if (strcmp(call, name())) return false;
     return (val = true);
   }
 

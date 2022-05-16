@@ -219,3 +219,8 @@ To use other build systems or manual compilation, you only have to add the `lyra
 - Compile-time, static
 - flags, attachments, assignments
 - Currently, no free-form/positional arguments
+
+Assumptions
+- not too many arguments (compiler flags are quite strange)
+- completely static and nothing is dynamic
+- simple parsing is fast enough

@@ -27,7 +27,7 @@ struct attachment : attachment<N, D, '\0'> {
     if (c != short_name()) return false;
     if (args.empty()) {
       throw parser_error(
-          args, std::string("No given value for short option '") + c + "'.");
+          args, string("No given value for short option '") + c + "'.");
     }
     val = args.pop_front();
     return true;
@@ -54,10 +54,10 @@ struct attachment<N, D, '\0'> {
   constexpr auto value() const noexcept -> value_type { return val; }
 
   constexpr bool parse(czstring call, arg_list& args) {
-    if (std::strcmp(call, name())) return false;
+    if (strcmp(call, name())) return false;
     if (args.empty()) {
       args.unpop_front();
-      throw parser_error(args, std::string("No given value for option '") +
+      throw parser_error(args, string("No given value for option '") +
                                    args.pop_front() + "'.");
     }
     val = args.pop_front();

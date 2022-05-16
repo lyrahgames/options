@@ -1,0 +1,12 @@
+$* --help >>EOE == 0
+This program is a simple test for the lyrahgames' options
+library and outputs a given file on the command line.
+
+-h, --help               Print the help message.
+--version                Print the library version.
+-i, --input <value>      Provide an input file.
+EOE
+
+$* 2>>EOE != 0
+ERROR: No input file provided.
+EOE
