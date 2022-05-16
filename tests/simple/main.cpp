@@ -32,7 +32,7 @@ using namespace options;
 option_list<  //
     flag<"help", "Print the help message.", 'h'>,
     flag<"version", "Print the library version.">,
-    attachment<"input", "Provide an input file.", 'i'>>
+    appendable<"input", "Provide an input file.", 'i'>>
     options{};
 
 // Initialize the application by parsing its command-line arguments.
@@ -65,15 +65,19 @@ void run() {
   }
 
   // Check for given input file in other cases.
-  if (!value<"input">(options)) {
+  if (!option<"input">(options)) {
     log::error("No input file provided.");
     exit(-1);
   }
 
   // Open file and output it on the command line.
-  fstream file{value<"input">(options), ios::in};
-  string line;
-  while (getline(file, line)) cout << line << endl;
+  for (auto str : value<"input">(options)) {
+    cout << "File: " << str << "\n" << endl;
+    fstream file{str, ios::in};
+    string line;
+    while (getline(file, line)) cout << line << endl;
+    cout << "\n\n" << endl;
+  }
 }
 
 }  // namespace application

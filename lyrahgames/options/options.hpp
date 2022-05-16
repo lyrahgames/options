@@ -4,3 +4,5 @@
 #include <lyrahgames/options/assignment.hpp>
 #include <lyrahgames/options/attachment.hpp>
 #include <lyrahgames/options/flag.hpp>
+//
+#include <lyrahgames/options/appendable.hpp>
