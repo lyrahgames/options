@@ -11,4 +11,8 @@ namespace lyrahgames::options {
 
 using namespace xstd;
 
+namespace generic {
+using namespace xstd::generic;
+}
+
 }  // namespace lyrahgames::options

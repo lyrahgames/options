@@ -1,26 +1,7 @@
 #pragma once
-#include <lyrahgames/options/arg_list.hpp>
+#include <lyrahgames/options/parser.hpp>
 
 namespace lyrahgames::options {
-
-namespace generic {
-using namespace lyrahgames::xstd::generic;
-
-template <typename T>
-concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
-  { T::name() } -> std::convertible_to<czstring>;
-  { T::description() } -> std::convertible_to<czstring>;
-  { x.value() } -> identical<typename T::value_type&>;
-  { c.value() } -> std::convertible_to<typename T::value_type>;
-  { x.parse(call, args) } -> std::convertible_to<bool>;
-};
-
-template <typename T>
-concept has_short_name = requires(T x) {
-  { x.short_name() } -> std::same_as<char>;
-};
-
-}  // namespace generic
 
 // --flag
 template <static_zstring N, static_zstring D, char S = '\0'>
@@ -79,8 +60,8 @@ struct attachment : attachment<N, D, '\0'> {
   constexpr bool parse(char c, arg_list& args) {
     if (c != short_name()) return false;
     if (args.empty()) {
-      throw std::invalid_argument(
-          std::string("No given value for short option '") + c + "'.");
+      throw parser_error(
+          args, std::string("No given value for short option '") + c + "'.");
     }
     val = args.pop_front();
     return true;
@@ -102,8 +83,8 @@ struct attachment<N, D, '\0'> {
     if (std::strcmp(call, name())) return false;
     if (args.empty()) {
       args.unpop_front();
-      throw std::invalid_argument(std::string("No given value for option '") +
-                                  args.pop_front() + "'.");
+      throw parser_error(args, std::string("No given value for option '") +
+                                   args.pop_front() + "'.");
     }
     val = args.pop_front();
     return true;
@@ -129,8 +110,8 @@ struct assignment {
     while (*n && *call && (*n == *call)) ++n, ++call;
     if (!*n && !*call) {
       args.unpop_front();
-      throw std::invalid_argument(std::string("No assignment for option '") +
-                                  args.pop_front() + "'.");
+      throw parser_error(args, std::string("No assignment for option '") +
+                                   args.pop_front() + "'.");
     }
     if (*n) return false;
     if (*call != '=') return false;

@@ -3,6 +3,25 @@
 
 namespace lyrahgames::options {
 
+namespace generic {
+
+/// Generic option concept for option types listed inside 'option_list'.
+template <typename T>
+concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
+  { T::name() } -> std::convertible_to<czstring>;
+  { T::description() } -> std::convertible_to<czstring>;
+  { x.value() } -> identical<typename T::value_type&>;
+  { c.value() } -> std::convertible_to<typename T::value_type>;
+  { x.parse(call, args) } -> std::convertible_to<bool>;
+};
+
+template <typename T>
+concept has_short_name = requires(T x) {
+  { x.short_name() } -> std::same_as<char>;
+};
+
+}  // namespace generic
+
 // We need a type-dependent expression that is always false
 // to provide useful compile-time error messages with static_assert.
 template <static_zstring name>
