@@ -1,30 +1,21 @@
 #pragma once
+#include <lyrahgames/options/basic_option.hpp>
 #include <lyrahgames/options/parser.hpp>
 
 namespace lyrahgames::options {
 
-/// Option type for list of options which also provides one additional value.
-/// Usage: --key=value
-
 template <static_zstring N, static_zstring D>
-struct assignment {
-  using value_type = czstring;
+struct assignment : basic_option<czstring, N, D> {
+  using base = basic_option<czstring, N, D>;
 
-  static constexpr auto name() { return N; }
+  using base::name;
+  using base::value;
 
-  static constexpr auto description() { return D; }
-
-  static constexpr auto help() {
-    return static_zstring("--") + N + static_zstring("=VALUE");
+  static constexpr auto help() noexcept {
+    return static_zstring("--") + name() + static_zstring("=<value>");
   }
 
-  constexpr operator czstring() { return val; }
-
-  constexpr operator bool() { return val; }
-
-  constexpr auto value() noexcept -> value_type& { return val; }
-
-  constexpr auto value() const noexcept -> value_type { return val; }
+  constexpr operator bool() noexcept { return value(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     const auto tmp = name();  // Need this one due to optimization.
@@ -37,11 +28,9 @@ struct assignment {
     }
     if (*n) return false;
     if (*call != '=') return false;
-    val = call + 1;
+    value() = call + 1;
     return true;
   }
-
-  value_type val = nullptr;
 };
 
 }  // namespace lyrahgames::options

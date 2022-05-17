@@ -30,9 +30,9 @@ void error(auto&& x) {
 // the variable which is able to store their values.
 using namespace options;
 option_list<  //
-    flag<"help", "Print the help message.", 'h'>,
+    flag<{"help", 'h'}, "Print the help message.">,
     flag<"version", "Print the library version.">,
-    appendable<"input", "Provide an input file.", 'i'>>
+    appendable<{"input", 'i'}, "Provide an input file.">>
     options{};
 
 // Initialize the application by parsing its command-line arguments.

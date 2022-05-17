@@ -1,27 +1,21 @@
 #pragma once
-#include <vector>
-//
+#include <lyrahgames/options/basic_option.hpp>
 #include <lyrahgames/options/parser.hpp>
 
 namespace lyrahgames::options {
 
 template <static_zstring N, static_zstring D>
-struct attachment_list {
-  using value_type = vector<czstring>;
+struct attachment_list : basic_option<vector<czstring>, N, D> {
+  using base = basic_option<vector<czstring>, N, D>;
 
-  static constexpr auto name() { return N; }
+  using base::name;
+  using base::value;
 
-  static constexpr auto description() { return D; }
-
-  static constexpr auto help() {
+  static constexpr auto help() noexcept {
     return static_zstring("--") + N + static_zstring(" <value> [<value> ...]");
   }
 
-  constexpr operator bool() noexcept { return !value_.empty(); }
-
-  constexpr auto value() noexcept -> value_type& { return value_; }
-
-  constexpr auto value() const noexcept -> const value_type& { return value_; }
+  constexpr operator bool() noexcept { return !value().empty(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     if (strcmp(call, name())) return false;
@@ -32,12 +26,10 @@ struct attachment_list {
     }
     do {
       if (*args.peek_front() == '-') break;
-      value_.push_back(args.pop_front());
+      value().push_back(args.pop_front());
     } while (args);
     return true;
   }
-
-  value_type value_{};
 };
 
 }  // namespace lyrahgames::options

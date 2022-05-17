@@ -1,9 +1,8 @@
 #pragma once
 #include <lyrahgames/options/version.hpp>
 //
-#include <lyrahgames/options/assignment.hpp>
-#include <lyrahgames/options/attachment.hpp>
-#include <lyrahgames/options/flag.hpp>
-//
-#include <lyrahgames/options/appendable.hpp>
-#include <lyrahgames/options/attachment_list.hpp>
+#include <lyrahgames/options/option/appendable.hpp>
+#include <lyrahgames/options/option/assignment.hpp>
+#include <lyrahgames/options/option/attachment.hpp>
+#include <lyrahgames/options/option/attachment_list.hpp>
+#include <lyrahgames/options/option/flag.hpp>

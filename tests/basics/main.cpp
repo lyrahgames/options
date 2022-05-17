@@ -9,11 +9,12 @@ using namespace lyrahgames;
 namespace application {
 using namespace options;
 option_list<  //
-    flag<"help", "Print the help message.", 'h'>,
+    // new_flag<{"help", 'h'}, "Print the help message.">,
+    flag<{"help", 'h'}, "Print the help message.">,
     flag<"version", "Print the help message.">,
-    flag<"quiet", "Print the help message.", 'q'>,
-    attachment<"input", "Provide program input.", 'i'>,
-    attachment<"output", "Provide program output.", 'o'>,
+    flag<{"quiet", 'q'}, "Print the help message.">,
+    attachment<{"input", 'i'}, "Provide program input.">,
+    attachment<{"output", 'o'}, "Provide program output.">,
     attachment<"type", "Provide program type.">,
     assignment<"key", "Provide a key.">>
     options{};
@@ -35,6 +36,21 @@ void print_options() {
 
 int main(int argc, char** argv) {
   using application::options;
+
+  // lyrahgames::options::option_name x{"Hello"};
+  // lyrahgames::options::option_name y{"Hello", 's'};
+  // x.name_;
+  // x.short_name_;
+  // y.name_;
+  // y.short_name_;
+
+  // lyrahgames::options::basic_option<bool, "help", "..."> x{};
+  // lyrahgames::options::basic_option<bool, {"version", 'v'}, "..."> y{};
+
+  // static_assert(!lyrahgames::options::generic::has_short_name<decltype(x)>);
+  // static_assert(lyrahgames::options::generic::has_short_name<decltype(y)>);
+  // static_assert(decltype(y)::short_name() == 'v');
+  // static_assert(decltype(y)::name() == "version");
 
   try {
     parse({argc, argv}, options);
