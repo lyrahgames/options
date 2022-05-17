@@ -104,7 +104,7 @@
     <tr>
         <td>Compiler:</td>
         <td>
-            GCC | Clang
+            GCC
         </td>
     </tr>
     <tr>
@@ -165,9 +165,9 @@ void error(auto&& x) {
 // the variable which is able to store their values.
 using namespace options;
 option_list<  //
-    flag<"help", "Print the help message.", 'h'>,
+    flag<{"help", 'h'}, "Print the help message.">,
     flag<"version", "Print the library version.">,
-    attachment<"input", "Provide an input file.", 'i'>>
+    appendable<{"input", 'i'}, "Provide an input file.">>
     options{};
 
 // Initialize the application by parsing its command-line arguments.
@@ -183,7 +183,7 @@ void init(int argc, char* argv[]) {
 // Run the actual application by interpreting the provided values.
 void run() {
   // Provide a custom help message.
-  if (value<"help">(options)) {
+  if (option<"help">(options)) {
     cout << "This program is a simple test for the lyrahgames' options\n"
             "library and outputs a given file on the command line.\n"
          << endl;
@@ -194,21 +194,25 @@ void run() {
   }
 
   // Provide the library version.
-  if (value<"version">(options)) {
+  if (option<"version">(options)) {
     cout << "Version " LYRAHGAMES_OPTIONS_VERSION_STR << endl;
     exit(0);
   }
 
   // Check for given input file in other cases.
-  if (!value<"input">(options)) {
+  if (!option<"input">(options)) {
     log::error("No input file provided.");
     exit(-1);
   }
 
   // Open file and output it on the command line.
-  fstream file{value<"input">(options), ios::in};
-  string line;
-  while (getline(file, line)) cout << line << endl;
+  for (auto str : value<"input">(options)) {
+    cout << "File: " << str << "\n" << endl;
+    fstream file{str, ios::in};
+    string line;
+    while (getline(file, line)) cout << line << endl;
+    cout << "\n\n" << endl;
+  }
 }
 
 }  // namespace application
@@ -217,6 +221,7 @@ int main(int argc, char* argv[]) {
   application::init(argc, argv);
   application::run();
 }
+
 ```
 
 Example Output:

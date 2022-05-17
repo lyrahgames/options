@@ -22,7 +22,7 @@ struct appendable : basic_option<vector<czstring>, N, D> {
       return result;
   }
 
-  constexpr operator bool() noexcept { return !value().empty(); }
+  constexpr operator bool() const noexcept { return !value().empty(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     if (strcmp(call, name())) return false;

@@ -28,7 +28,7 @@ struct flag : basic_option<bool, N, D> {
   }
 
   /// Check if option has been provided at the command line.
-  constexpr operator bool() noexcept { return value(); }
+  constexpr operator bool() const noexcept { return value(); }
 
   /// Parser function for the standard flag.
   constexpr bool parse(czstring call, arg_list& args) {

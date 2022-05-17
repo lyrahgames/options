@@ -20,7 +20,7 @@ struct assignment : basic_option<czstring, N, D> {
     return static_zstring("--") + name() + static_zstring("=<value>");
   }
 
-  constexpr operator bool() noexcept { return value(); }
+  constexpr operator bool() const noexcept { return value(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     const auto tmp = name();  // Need this one due to optimization.

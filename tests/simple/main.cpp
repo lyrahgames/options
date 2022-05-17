@@ -48,7 +48,7 @@ void init(int argc, char* argv[]) {
 // Run the actual application by interpreting the provided values.
 void run() {
   // Provide a custom help message.
-  if (value<"help">(options)) {
+  if (option<"help">(options)) {
     cout << "This program is a simple test for the lyrahgames' options\n"
             "library and outputs a given file on the command line.\n"
          << endl;
@@ -59,7 +59,7 @@ void run() {
   }
 
   // Provide the library version.
-  if (value<"version">(options)) {
+  if (option<"version">(options)) {
     cout << "Version " LYRAHGAMES_OPTIONS_VERSION_STR << endl;
     exit(0);
   }

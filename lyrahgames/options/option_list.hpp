@@ -10,14 +10,20 @@ template <typename T>
 concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
   { T::name() } -> convertible_to<czstring>;
   { T::description() } -> convertible_to<czstring>;
+  { T::help() } -> convertible_to<czstring>;
+  // Check whether option has been provided at command line.
+  { c } -> convertible_to<bool>;
+  // Value acces for references and const references.
   { x.value() } -> identical<typename T::value_type&>;
   { c.value() } -> convertible_to<typename T::value_type>;
+  // Standard Parsing Function
   { x.parse(call, args) } -> convertible_to<bool>;
 };
 
 template <typename T>
-concept has_short_name = requires(T x) {
-  { x.short_name() } -> same_as<char>;
+concept has_short_name = requires(T& x, char call, arg_list& args) {
+  { T::short_name() } -> same_as<char>;
+  { x.parse(call, args) } -> convertible_to<bool>;
 };
 
 }  // namespace generic

@@ -24,7 +24,7 @@ struct attachment : basic_option<czstring, N, D> {
       return result;
   }
 
-  constexpr operator bool() noexcept { return value(); }
+  constexpr operator bool() const noexcept { return value(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     if (strcmp(call, name())) return false;

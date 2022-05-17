@@ -37,21 +37,6 @@ void print_options() {
 int main(int argc, char** argv) {
   using application::options;
 
-  // lyrahgames::options::option_name x{"Hello"};
-  // lyrahgames::options::option_name y{"Hello", 's'};
-  // x.name_;
-  // x.short_name_;
-  // y.name_;
-  // y.short_name_;
-
-  // lyrahgames::options::basic_option<bool, "help", "..."> x{};
-  // lyrahgames::options::basic_option<bool, {"version", 'v'}, "..."> y{};
-
-  // static_assert(!lyrahgames::options::generic::has_short_name<decltype(x)>);
-  // static_assert(lyrahgames::options::generic::has_short_name<decltype(y)>);
-  // static_assert(decltype(y)::short_name() == 'v');
-  // static_assert(decltype(y)::name() == "version");
-
   try {
     parse({argc, argv}, options);
   } catch (exception& e) {
@@ -61,18 +46,18 @@ int main(int argc, char** argv) {
 
   // value<"test">(options);
 
-  if (value<"help">(options)) cout << "--help" << '\n';
-  if (value<"version">(options)) cout << "--version" << '\n';
-  if (value<"quiet">(options)) cout << "--quiet" << '\n';
+  if (option<"help">(options)) cout << "--help" << '\n';
+  if (option<"version">(options)) cout << "--version" << '\n';
+  if (option<"quiet">(options)) cout << "--quiet" << '\n';
 
-  if (value<"input">(options))
+  if (option<"input">(options))
     cout << "--input " << value<"input">(options) << '\n';
-  if (value<"output">(options))
+  if (option<"output">(options))
     cout << "--output " << value<"output">(options) << '\n';
-  if (value<"type">(options))
+  if (option<"type">(options))
     cout << "--type " << value<"type">(options) << '\n';
 
-  if (value<"key">(options)) cout << "--key " << value<"key">(options) << '\n';
+  if (option<"key">(options)) cout << "--key " << value<"key">(options) << '\n';
   // print_options();
   // cout << value<"key">(options) << '\n';
 }

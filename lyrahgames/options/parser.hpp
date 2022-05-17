@@ -51,7 +51,7 @@ constexpr bool parse_short_options(arg_list& args,
     // Push parsing of short option to all option types
     // until parsing can be applied by using 'for_each_until'.
     const auto index = for_each_until(options, [&](auto& option) {
-      if constexpr (!generic::has_short_name<decltype(option)>)
+      if constexpr (!generic::has_short_name<decay_t<decltype(option)>>)
         return false;
       else
         return option.parse(*arg, args);

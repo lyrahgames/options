@@ -15,7 +15,7 @@ struct attachment_list : basic_option<vector<czstring>, N, D> {
     return static_zstring("--") + N + static_zstring(" <value> [<value> ...]");
   }
 
-  constexpr operator bool() noexcept { return !value().empty(); }
+  constexpr operator bool() const noexcept { return !value().empty(); }
 
   constexpr bool parse(czstring call, arg_list& args) {
     if (strcmp(call, name())) return false;
