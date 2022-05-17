@@ -4,6 +4,8 @@
 
 namespace lyrahgames::options {
 
+/// Option type for list of options which also provides one additional value.
+/// Usage: --flag value
 template <option_identifier N, static_zstring D>
 struct attachment : basic_option<czstring, N, D> {
   using base = basic_option<czstring, N, D>;

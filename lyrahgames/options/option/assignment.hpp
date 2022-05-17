@@ -4,6 +4,11 @@
 
 namespace lyrahgames::options {
 
+/// Option type which provides an additional value
+/// by using '=' without white space as an assignment.
+/// It must not provide a short name alternative due to the assignment pattern.
+/// Hence, no option identifier is used.
+/// Usage: --key=value
 template <static_zstring N, static_zstring D>
 struct assignment : basic_option<czstring, N, D> {
   using base = basic_option<czstring, N, D>;
