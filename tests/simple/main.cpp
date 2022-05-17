@@ -32,8 +32,10 @@ using namespace options;
 option_list<  //
     flag<{"help", 'h'}, "Print the help message.">,
     flag<"version", "Print the library version.">,
-    appendable<{"input", 'i'}, "Provide an input file.">>
+    appendable<{"input", 'i'}, "Provide an input file.">,
+    attachment<{"output", 'o'}, "Set the output.">>
     options{};
+using positioning = position_list<"output", {"input", undefined}>;
 
 // Initialize the application by parsing its command-line arguments.
 void init(int argc, char* argv[]) {

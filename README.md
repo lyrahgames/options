@@ -365,3 +365,15 @@ The provided library is trying to do exactly this.
 - The storage of program options should not be critical. Every option that only provides a simple switch is represented by a whole `bool` variable. It is possible to change that but may not be worth the effort. Options, like attachments and assignments, are indeed stored quite efficiently by a simple pointer.
 - Complicated parsing for specific option types, that may be based on enumerations, should not be done inside the program options parser but instead afterwards by a custom parser. Typically, only boolean and string variables will be needed by the program options state. But still it is possible to implement custom option types which could automatically parse more difficult representations.
 - The parsing of program options should not involve any callbacks provided by the user that are called when a specific option has been recognized. The live execution of a callback would dictate a specific execution order and would make it impossible to catch parser errors before running those callbacks. A separation of parsing and execution may be superior. The source code is easier to reason about. The execution order can be adjusted. Parser errors can be filtered out and we can keep the state of all the program options. Furthermore, using callbacks will most likely not give you any better performance.
+
+## API
+### Definition of Option List
+### Parsing
+### Option Identifier
+### Option Types
+### Usage and Short Option Patterns
+### Help Function
+
+## Examples
+### Subcommands
+### File Lists

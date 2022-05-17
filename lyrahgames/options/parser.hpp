@@ -1,6 +1,7 @@
 #pragma once
 #include <lyrahgames/options/arg_list.hpp>
 #include <lyrahgames/options/option_list.hpp>
+#include <lyrahgames/options/position_list.hpp>
 
 namespace lyrahgames::options {
 
@@ -80,6 +81,37 @@ constexpr bool parse_option(arg_list& args, auto& options, czstring current) {
     throw parser_error(args, string("Unknown option '") + current + "'.");
   }
   return true;
+}
+
+template <typename list>
+constexpr bool parse_position(arg_list& args,
+                              auto& options,
+                              czstring current,
+                              size_t position) {
+  return false;
+}
+
+template <typename list>
+constexpr void parse(arg_list args, auto& options) {
+  // Assume that the first argument is the name of the program.
+  args.pop_front();
+  size_t position = 0;
+  // Process all arguments in the list.
+  while (!args.empty()) {
+    const auto current = args.pop_front();
+    // Short option pattern: -i, -io
+    if (parse_short_options(args, options, current)) continue;
+    // Flags: --input, --help
+    if (parse_option(args, options, current)) continue;
+    // Handle arguments that are no short option nor flag by an excption.
+
+    ++position;
+    parse_position<list>(args, options, current, position);
+
+    args.unpop_front();
+    throw parser_error(args,
+                       string("Given option '") + current + "' is not a flag.");
+  }
 }
 
 /// Function to parse the arguments provided by 'arg_list'
