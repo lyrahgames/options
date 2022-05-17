@@ -1,6 +1,7 @@
 #pragma once
-#include <lyrahgames/options/parser.hpp>
 #include <vector>
+//
+#include <lyrahgames/options/parser.hpp>
 
 namespace lyrahgames::options {
 

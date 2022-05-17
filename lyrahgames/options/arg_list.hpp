@@ -35,6 +35,8 @@ struct arg_list {
   /// Check whether all arguments of the list have already been processed.
   constexpr bool empty() const noexcept { return index >= count; }
 
+  constexpr operator bool() const noexcept { return !empty(); }
+
   /// Get the current unprocessed argument and mark it as processed.
   /// This function does not delete the processed argument.
   /// We can always use 'unpop_front' to mark it again as unprocessed.

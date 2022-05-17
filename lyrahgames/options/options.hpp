@@ -6,3 +6,4 @@
 #include <lyrahgames/options/flag.hpp>
 //
 #include <lyrahgames/options/appendable.hpp>
+#include <lyrahgames/options/attachment_list.hpp>
