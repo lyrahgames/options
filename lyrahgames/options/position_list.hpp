@@ -19,4 +19,37 @@ struct position_list {
   static constexpr auto size() noexcept -> size_t { return (p.count + ...); }
 };
 
+template <position p, position... q>
+constexpr bool visit(size_t x, auto&& f, size_t last = 0) {
+  if constexpr (p.count == undefined) {
+    forward<decltype(f)>(f).template operator()<p.name>(x);
+    return true;
+  } else {
+    last += p.count;
+    if (x <= last) {
+      forward<decltype(f)>(f).template operator()<p.name>(x);
+      return true;
+    }
+    if constexpr (sizeof...(q))
+      return visit<q...>(x, forward<decltype(f)>(f), last);
+    else
+      return false;
+  }
+}
+
+template <typename T>
+struct visit_helper;
+
+template <position... p>
+struct visit_helper<position_list<p...>> {
+  constexpr bool operator()(size_t x, auto&& f) {
+    return visit<p...>(x, forward<decltype(f)>(f));
+  }
+};
+
+template <typename T>
+constexpr bool visit(size_t x, auto&& f) {
+  return visit_helper<T>{}(x, forward<decltype(f)>(f));
+}
+
 }  // namespace lyrahgames::options

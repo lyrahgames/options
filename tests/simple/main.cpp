@@ -40,11 +40,16 @@ using positioning = position_list<"output", {"input", undefined}>;
 // Initialize the application by parsing its command-line arguments.
 void init(int argc, char* argv[]) {
   try {
-    parse({argc, argv}, options);
+    parse<positioning>({argc, argv}, options);
   } catch (options::parser_error& e) {
     log::error(e.what());
     exit(-1);
   }
+
+  // for (size_t i = 1; i < 10; ++i)
+  //   visit<positioning>(i, []<static_zstring name>(size_t x) {
+  //     cout << name << " = " << (bool)option<name>(options) << endl;
+  //   });
 }
 
 // Run the actual application by interpreting the provided values.

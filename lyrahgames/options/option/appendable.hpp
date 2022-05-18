@@ -44,6 +44,10 @@ struct appendable : basic_option<vector<czstring>, N, D> {
     value().push_back(args.pop_front());
     return true;
   }
+
+  constexpr void parse(czstring current, arg_list& args, size_t position) {
+    value().push_back(current);
+  }
 };
 
 }  // namespace lyrahgames::options

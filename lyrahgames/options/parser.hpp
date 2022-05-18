@@ -106,11 +106,16 @@ constexpr void parse(arg_list args, auto& options) {
     // Handle arguments that are no short option nor flag by an excption.
 
     ++position;
-    parse_position<list>(args, options, current, position);
-
-    args.unpop_front();
-    throw parser_error(args,
-                       string("Given option '") + current + "' is not a flag.");
+    // parse_position<list>(args, options, current, position);
+    const auto visited =
+        visit<list>(position, [&]<static_zstring name>(size_t x) {
+          option<name>(options).parse(current, args, x);
+        });
+    if (!visited) {
+      args.unpop_front();
+      throw parser_error(
+          args, string("Given option '") + current + "' is not a flag.");
+    }
   }
 }
 

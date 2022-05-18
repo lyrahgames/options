@@ -46,6 +46,10 @@ struct attachment : basic_option<czstring, N, D> {
     value() = args.pop_front();
     return true;
   }
+
+  constexpr void parse(czstring current, arg_list& args, size_t position) {
+    value() = current;
+  }
 };
 
 }  // namespace lyrahgames::options
