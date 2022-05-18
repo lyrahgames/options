@@ -22,12 +22,12 @@ struct position_list {
 template <position p, position... q>
 constexpr bool visit(size_t x, auto&& f, size_t last = 0) {
   if constexpr (p.count == undefined) {
-    forward<decltype(f)>(f).template operator()<p.name>(x);
+    forward<decltype(f)>(f).template operator()<p.name>();
     return true;
   } else {
     last += p.count;
     if (x <= last) {
-      forward<decltype(f)>(f).template operator()<p.name>(x);
+      forward<decltype(f)>(f).template operator()<p.name>();
       return true;
     }
     if constexpr (sizeof...(q))

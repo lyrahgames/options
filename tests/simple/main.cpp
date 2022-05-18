@@ -45,11 +45,6 @@ void init(int argc, char* argv[]) {
     log::error(e.what());
     exit(-1);
   }
-
-  // for (size_t i = 1; i < 10; ++i)
-  //   visit<positioning>(i, []<static_zstring name>(size_t x) {
-  //     cout << name << " = " << (bool)option<name>(options) << endl;
-  //   });
 }
 
 // Run the actual application by interpreting the provided values.

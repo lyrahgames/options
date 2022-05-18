@@ -107,10 +107,9 @@ constexpr void parse(arg_list args, auto& options) {
 
     ++position;
     // parse_position<list>(args, options, current, position);
-    const auto visited =
-        visit<list>(position, [&]<static_zstring name>(size_t x) {
-          option<name>(options).parse(current, args, x);
-        });
+    const auto visited = visit<list>(position, [&]<static_zstring name> {
+      option<name>(options).parse(current, args, position);
+    });
     if (!visited) {
       args.unpop_front();
       throw parser_error(
