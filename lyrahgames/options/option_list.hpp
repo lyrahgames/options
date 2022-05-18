@@ -182,13 +182,13 @@ constexpr void for_each(auto&& options, auto&& functor) {
 /// and applying the given function object until it returns true for the first time.
 /// The algorithm returns the index at which it stopped.
 template <size_t index = 0>
-constexpr auto for_each_until(auto&& options, auto&& functor) -> size_t {
+constexpr bool for_each_until(auto&& options, auto&& functor) {
   if constexpr (index < decay_t<decltype(options)>::size()) {
-    if (functor(option<index>(options))) return index;
+    if (functor(option<index>(options))) return true;
     return for_each_until<index + 1>(forward<decltype(options)>(options),
                                      forward<decltype(functor)>(functor));
   }
-  return index;
+  return false;
 }
 
 }  // namespace lyrahgames::options

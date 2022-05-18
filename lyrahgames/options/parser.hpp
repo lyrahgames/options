@@ -51,14 +51,14 @@ constexpr bool parse_short_options(arg_list& args,
   for (; *arg; ++arg) {
     // Push parsing of short option to all option types
     // until parsing can be applied by using 'for_each_until'.
-    const auto index = for_each_until(options, [&](auto& option) {
+    const auto parsed = for_each_until(options, [&](auto& option) {
       if constexpr (!generic::has_short_name<decay_t<decltype(option)>>)
         return false;
       else
         return option.parse(*arg, args);
     });
     // If no option provides this short name, throw an exception.
-    if (index >= options.size()) {
+    if (!parsed) {
       args.unpop_front();
       throw parser_error(args, string("Unknown short option '") + *arg +
                                    "' in '" + current + "'.");
@@ -73,10 +73,10 @@ constexpr bool parse_option(arg_list& args, auto& options, czstring current) {
   const auto call = no_flag_prefix(current);
   if (!call) return false;
   // Push the parsing the all the options until it is successful.
-  const auto index =
+  const auto parsed =
       for_each_until(options, [&](auto& x) { return x.parse(call, args); });
   // Throw an exception if no option with the given name exists.
-  if (index >= options.size()) {
+  if (!parsed) {
     args.unpop_front();
     throw parser_error(args, string("Unknown option '") + current + "'.");
   }
