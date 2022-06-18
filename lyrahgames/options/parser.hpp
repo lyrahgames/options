@@ -1,5 +1,6 @@
 #pragma once
 #include <lyrahgames/options/arg_list.hpp>
+#include <lyrahgames/options/named_tuple.hpp>
 #include <lyrahgames/options/option_list.hpp>
 #include <lyrahgames/options/position_list.hpp>
 
@@ -137,6 +138,143 @@ constexpr void parse(arg_list args, auto& options) {
     throw parser_error(args,
                        string("Given option '") + current + "' is not a flag.");
   }
+}
+
+struct name_parser {
+  template <instance::option_list options>
+  static constexpr void parse(czstring current, arg_list& args, options& opts) {
+    // Generate a static radix tree of option names based on the given option list.
+    using names = name_tree<options>;
+    using namespace static_radix_tree;
+    // Try to match the names inside the radix tree as prefixes
+    // and call in a successful case the respective parsing routine
+    // of the specific option type.
+    const auto prefix_matched =
+        traverse<names>(current, [&]<static_zstring prefix>(czstring tail) {
+          option<prefix>(opts).tree_parse(tail, args);
+        });
+    if (prefix_matched) return;
+    // If no name could be matched as prefix,
+    // we have failed to parse the argument.
+    args.unpop_front();
+    throw parser_error(args, string("Unknown option '") + args.front() + "'.");
+  }
+};
+
+struct short_name_parser {
+  template <instance::option_list options>
+  static constexpr void parse(czstring current, arg_list& args, options& opts) {
+    for (auto arg = current; *arg; ++arg) {
+      const auto parsed = for_each_until(opts, [&](auto& opt) {
+        if constexpr (!generic::has_short_name2<decay_t<decltype(opt)>>)
+          return false;
+        else {
+          if (opt.short_name() != *arg) return false;
+          opt.tree_parse(args);
+          return true;
+        }
+      });
+      if (parsed) continue;
+      args.unpop_front();
+      throw parser_error(args, string("Unknown short option '") + *arg +
+                                   "' in '" + args.front() + "'.");
+    }
+  }
+};
+
+template <typename position_schedule>
+struct positional_parser {
+  template <instance::option_list options>
+  constexpr void parse(czstring current, arg_list& args, options& opts) {
+    ++position;
+    const auto visited =
+        visit<position_schedule>(position, [&]<static_zstring name> {
+          option<name>(opts).parse(current, args, position);
+        });
+    if (visited) return;
+    args.unpop_front();
+    throw parser_error(args, string("Failed to parse positional argument '") +
+                                 args.front() + "' due to wrong positioning.");
+  }
+
+  size_t position = 0;
+};
+
+namespace generic {
+template <typename parser, typename options>
+concept named_parser = named<parser> && instance::option_list<options> &&
+    requires(parser p, czstring current, arg_list& args, options& opts) {
+  { p.parse(current, args, opts) } -> same_as<void>;
+};
+}  // namespace generic
+
+namespace detail {
+template <instance::named_tuple schedule, instance::option_list options>
+struct is_parser_schedule : false_type {};
+template <instance::option_list options, typename... parsers>
+struct is_parser_schedule<named_tuple<parsers...>, options> {
+  static constexpr bool value =
+      (generic::named_parser<parsers, options> && ...);
+};
+}  // namespace detail
+template <instance::named_tuple schedule, instance::option_list options>
+constexpr bool is_parser_schedule =
+    detail::is_parser_schedule<schedule, options>::value;
+
+namespace instance {
+template <typename schedule, typename options>
+concept parser_schedule = is_parser_schedule<schedule, options>;
+}
+
+template <generic::named... parsers>
+using parser_schedule = named_tuple<parsers...>;
+
+constexpr auto default_parser_schedule() noexcept {
+  return parser_schedule<named<"--", name_parser>,
+                         named<"-", short_name_parser>>{};
+}
+template <typename position_schedule>
+constexpr auto default_parser_schedule() noexcept {
+  return parser_schedule<named<"--", name_parser>,
+                         named<"-", short_name_parser>,
+                         named<"", positional_parser<position_schedule>>>{};
+}
+
+template <instance::option_list option_list,
+          instance::parser_schedule<option_list> parser_schedule>
+constexpr void parse(arg_list args,
+                     option_list& opts,
+                     parser_schedule schedule) {
+  // Generate a static radix tree of prefixes based on the given prefix parsers.
+  using prefixes = static_name_tree<parser_schedule>;
+  using namespace static_radix_tree;
+  // Assume that the first argument is the name of the program.
+  args.pop_front();
+  // Process all arguments in the list one after another.
+  while (!args.empty()) {
+    const auto current = args.pop_front();
+    // Traverse the static prefix tree with the current argument
+    // and call the specific parsing routine by template parameters
+    // when a prefix could be matched.
+    const auto prefix_matched =
+        traverse<prefixes>(current, [&]<static_zstring prefix>(czstring tail) {
+          get_by_name<prefix>(schedule).parse(tail, args, opts);
+        });
+    if (prefix_matched) continue;
+    // If no prefix could be matched then we failed to parse the given argument.
+    args.unpop_front();
+    throw parser_error(
+        args, string("Given option '") + args.front() + "' is not a flag.");
+  }
+}
+
+constexpr void fast_parse(arg_list args, instance::option_list auto& opts) {
+  parse(args, opts, default_parser_schedule());
+}
+
+template <typename position_schedule>
+constexpr void fast_parse(arg_list args, instance::option_list auto& opts) {
+  parse(args, opts, default_parser_schedule<position_schedule>());
 }
 
 }  // namespace lyrahgames::options

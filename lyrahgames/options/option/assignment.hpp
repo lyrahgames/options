@@ -36,6 +36,15 @@ struct assignment : basic_option<czstring, N, D> {
     value() = call + 1;
     return true;
   }
+
+  constexpr void tree_parse(czstring current, arg_list& args) {
+    if (*current++ != '=') {
+      args.unpop_front();
+      throw parser_error(
+          args, string("Failed to parse option '") + args.front() + "'.");
+    }
+    value() = current;
+  }
 };
 
 }  // namespace lyrahgames::options

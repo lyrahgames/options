@@ -1,4 +1,6 @@
 #pragma once
+#include <lyrahgames/xstd/static_radix_tree.hpp>
+//
 #include <lyrahgames/options/arg_list.hpp>
 
 namespace lyrahgames::options {
@@ -26,6 +28,12 @@ concept has_short_name = requires(T& x, char call, arg_list& args) {
   { x.parse(call, args) } -> convertible_to<bool>;
 };
 
+template <typename T>
+concept has_short_name2 = requires(T& x, arg_list& args) {
+  { T::short_name() } -> same_as<char>;
+  x.tree_parse(args);
+};
+
 }  // namespace generic
 
 // We need a type-dependent expression that is always false
@@ -48,6 +56,21 @@ struct invalid_option {
 
 template <generic::option...>
 struct option_list;
+
+namespace detail {
+template <typename list>
+struct is_option_list : std::false_type {};
+template <generic::option... options>
+struct is_option_list<option_list<options...>> : std::true_type {};
+}  // namespace detail
+
+template <typename list>
+constexpr bool is_option_list = detail::is_option_list<list>::value;
+
+namespace instance {
+template <typename list>
+concept option_list = is_option_list<list>;
+}
 
 // Sentinel specialization of option list.
 // For now, we use deleted functions to say
@@ -190,5 +213,17 @@ constexpr bool for_each_until(auto&& options, auto&& functor) {
   }
   return false;
 }
+
+///
+namespace detail {
+template <instance::option_list options>
+struct name_tree {};
+template <generic::option... options>
+struct name_tree<option_list<options...>> {
+  using type = static_radix_tree::construction<options::name()...>;
+};
+}  // namespace detail
+template <instance::option_list list>
+using name_tree = typename detail::name_tree<list>::type;
 
 }  // namespace lyrahgames::options

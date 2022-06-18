@@ -53,6 +53,8 @@ struct arg_list {
     return values[index];
   }
 
+  constexpr auto front() const noexcept -> czstring { return values[index]; }
+
   /// Count of all processed and unprocessed arguments
   size_t count{};
   /// C strings of arguments typically provided by program execution

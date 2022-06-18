@@ -5,6 +5,7 @@ library and outputs a given file on the command line.
 -h, --help               Print the help message.
 --version                Print the library version.
 -i, --input <value>      Provide an input file.
+-o, --output <value>     Set the output.
 EOE
 
 $* 2>>EOE != 0

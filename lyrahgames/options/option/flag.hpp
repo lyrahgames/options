@@ -41,6 +41,14 @@ struct flag : basic_option<bool, N, D> {
     if (c != short_name()) return false;
     return (value() = true);
   }
+
+  constexpr void tree_parse(czstring current, arg_list& args) {
+    if (*current)
+      throw parser_error(args, string("Option could not be parsed!"));
+    value() = true;
+  }
+
+  constexpr void tree_parse(arg_list& args) { value() = true; }
 };
 
 }  // namespace lyrahgames::options

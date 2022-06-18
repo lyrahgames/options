@@ -5,6 +5,7 @@
 //
 #include <lyrahgames/xstd/builtin_types.hpp>
 #include <lyrahgames/xstd/forward.hpp>
+#include <lyrahgames/xstd/static_radix_tree.hpp>
 #include <lyrahgames/xstd/static_zstring.hpp>
 
 namespace lyrahgames::options {

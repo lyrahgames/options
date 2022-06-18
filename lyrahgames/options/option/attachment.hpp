@@ -50,6 +50,18 @@ struct attachment : basic_option<czstring, N, D> {
   constexpr void parse(czstring current, arg_list& args, size_t position) {
     value() = current;
   }
+
+  constexpr void tree_parse(czstring current, arg_list& args) {
+    if (*current) {
+      args.unpop_front();
+      throw parser_error(args, string("Failed to parse option '") +
+                                   args.front() + "'. Did you mean '" +
+                                   czstring(name()) + "'?");
+    }
+    value() = args.pop_front();
+  }
+
+  constexpr void tree_parse(arg_list& args) { value() = args.pop_front(); }
 };
 
 }  // namespace lyrahgames::options
