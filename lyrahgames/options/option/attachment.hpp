@@ -1,6 +1,5 @@
 #pragma once
-#include <lyrahgames/options/basic_option.hpp>
-#include <lyrahgames/options/parser.hpp>
+#include <lyrahgames/options/option_utility.hpp>
 
 namespace lyrahgames::options {
 
@@ -26,42 +25,32 @@ struct attachment : basic_option<czstring, N, D> {
 
   constexpr operator bool() const noexcept { return value(); }
 
-  constexpr bool parse(czstring call, arg_list& args) {
-    if (strcmp(call, name())) return false;
-    if (args.empty()) {
-      args.unpop_front();
-      throw parser_error(args, string("No given value for option '") +
-                                   args.pop_front() + "'.");
-    }
-    value() = args.pop_front();
-    return true;
-  }
-
-  constexpr bool parse(char c, arg_list& args) requires(has_short_name()) {
-    if (c != short_name()) return false;
-    if (args.empty()) {
-      throw parser_error(
-          args, string("No given value for short option '") + c + "'.");
-    }
-    value() = args.pop_front();
-    return true;
-  }
-
   constexpr void parse(czstring current, arg_list& args, size_t position) {
     value() = current;
   }
 
-  constexpr void tree_parse(czstring current, arg_list& args) {
+  constexpr void parse(czstring current, arg_list& args) {
     if (*current) {
       args.unpop_front();
       throw parser_error(args, string("Failed to parse option '") +
                                    args.front() + "'. Did you mean '" +
                                    czstring(name()) + "'?");
     }
+    if (args.empty()) {
+      args.unpop_front();
+      throw parser_error(
+          args, string("No given value for option '") + args.front() + "'.");
+    }
     value() = args.pop_front();
   }
 
-  constexpr void tree_parse(arg_list& args) { value() = args.pop_front(); }
+  constexpr void parse(arg_list& args) {
+    if (args.empty()) {
+      throw parser_error(args, string("No given value for short option '") +
+                                   short_name() + "'.");
+    }
+    value() = args.pop_front();
+  }
 };
 
 }  // namespace lyrahgames::options

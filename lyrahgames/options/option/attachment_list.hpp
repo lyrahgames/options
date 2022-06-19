@@ -1,6 +1,5 @@
 #pragma once
-#include <lyrahgames/options/basic_option.hpp>
-#include <lyrahgames/options/parser.hpp>
+#include <lyrahgames/options/option_utility.hpp>
 
 namespace lyrahgames::options {
 
@@ -17,8 +16,12 @@ struct attachment_list : basic_option<vector<czstring>, N, D> {
 
   constexpr operator bool() const noexcept { return !value().empty(); }
 
-  constexpr bool parse(czstring call, arg_list& args) {
-    if (strcmp(call, name())) return false;
+  constexpr bool parse(czstring current, arg_list& args) {
+    if (*current) {
+      args.unpop_front();
+      throw parser_error(
+          args, string("Failed to parse option '") + args.front() + "'.");
+    }
     if (args.empty()) {
       args.unpop_front();
       throw parser_error(args, string("No given value for option '") +

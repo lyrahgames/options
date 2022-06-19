@@ -1,6 +1,5 @@
 #pragma once
-#include <lyrahgames/options/basic_option.hpp>
-#include <lyrahgames/options/parser.hpp>
+#include <lyrahgames/options/option_utility.hpp>
 
 namespace lyrahgames::options {
 
@@ -30,25 +29,13 @@ struct flag : basic_option<bool, N, D> {
   /// Check if option has been provided at the command line.
   constexpr operator bool() const noexcept { return value(); }
 
-  /// Parser function for the standard flag.
-  constexpr bool parse(czstring call, arg_list& args) {
-    if (strcmp(call, name())) return false;
-    return (value() = true);
-  }
-
-  /// Parser function for the short name alternative.
-  constexpr bool parse(char c, arg_list& args) requires(has_short_name()) {
-    if (c != short_name()) return false;
-    return (value() = true);
-  }
-
-  constexpr void tree_parse(czstring current, arg_list& args) {
+  constexpr void parse(czstring current, arg_list& args) {
     if (*current)
       throw parser_error(args, string("Option could not be parsed!"));
     value() = true;
   }
 
-  constexpr void tree_parse(arg_list& args) { value() = true; }
+  constexpr void parse(arg_list& args) { value() = true; }
 };
 
 }  // namespace lyrahgames::options

@@ -1,6 +1,5 @@
 #pragma once
-#include <lyrahgames/options/basic_option.hpp>
-#include <lyrahgames/options/parser.hpp>
+#include <lyrahgames/options/option_utility.hpp>
 
 namespace lyrahgames::options {
 
@@ -22,26 +21,11 @@ struct assignment : basic_option<czstring, N, D> {
 
   constexpr operator bool() const noexcept { return value(); }
 
-  constexpr bool parse(czstring call, arg_list& args) {
-    const auto tmp = name();  // Need this one due to optimization.
-    czstring n = tmp;
-    while (*n && *call && (*n == *call)) ++n, ++call;
-    if (!*n && !*call) {
-      args.unpop_front();
-      throw parser_error(
-          args, string("No assignment for option '") + args.pop_front() + "'.");
-    }
-    if (*n) return false;
-    if (*call != '=') return false;
-    value() = call + 1;
-    return true;
-  }
-
-  constexpr void tree_parse(czstring current, arg_list& args) {
+  constexpr void parse(czstring current, arg_list& args) {
     if (*current++ != '=') {
       args.unpop_front();
       throw parser_error(
-          args, string("Failed to parse option '") + args.front() + "'.");
+          args, string("No assignment for option '") + args.front() + "'.");
     }
     value() = current;
   }

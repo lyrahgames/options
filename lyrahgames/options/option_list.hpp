@@ -19,7 +19,7 @@ concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
   { x.value() } -> identical<typename T::value_type&>;
   { c.value() } -> convertible_to<typename T::value_type>;
   // Standard Parsing Function
-  { x.parse(call, args) } -> convertible_to<bool>;
+  x.parse(call, args);
 };
 
 template <typename T>
@@ -31,7 +31,7 @@ concept has_short_name = requires(T& x, char call, arg_list& args) {
 template <typename T>
 concept has_short_name2 = requires(T& x, arg_list& args) {
   { T::short_name() } -> same_as<char>;
-  x.tree_parse(args);
+  x.parse(args);
 };
 
 }  // namespace generic

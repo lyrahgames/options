@@ -49,11 +49,12 @@ struct arg_list {
   /// Get the current unprocessed argument without extracting it from the stream.
   /// It will not be marked as processed
   /// and will again be accessed when 'pop_front' is called.
+  constexpr auto front() const noexcept -> czstring { return values[index]; }
+
+  /// Same as 'front' and provided for consistency.
   constexpr auto peek_front() const noexcept -> czstring {
     return values[index];
   }
-
-  constexpr auto front() const noexcept -> czstring { return values[index]; }
 
   /// Count of all processed and unprocessed arguments
   size_t count{};

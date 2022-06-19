@@ -68,8 +68,8 @@ int main(int argc, char** argv) {
   cout << get_by_name<"third">(data).value << endl;
 
   try {
-    options::fast_parse<application::positioning>({argc, argv},
-                                                  application::options);
+    options::parse<application::positioning>({argc, argv},
+                                             application::options);
   } catch (exception& e) {
     cerr << e.what() << '\n';
     return -1;

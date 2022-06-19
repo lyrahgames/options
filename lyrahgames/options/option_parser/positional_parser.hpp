@@ -1,5 +1,5 @@
 #pragma once
-#include <lyrahgames/options/utility.hpp>
+#include <lyrahgames/options/parser_utility.hpp>
 
 namespace lyrahgames::options {
 
@@ -51,5 +51,23 @@ template <typename T>
 constexpr bool visit(size_t x, auto&& f) {
   return visit_helper<T>{}(x, forward<decltype(f)>(f));
 }
+
+template <typename position_schedule>
+struct positional_parser {
+  template <instance::option_list options>
+  constexpr void parse(czstring current, arg_list& args, options& opts) {
+    ++position;
+    const auto visited =
+        visit<position_schedule>(position, [&]<static_zstring name> {
+          option<name>(opts).parse(current, args, position);
+        });
+    if (visited) return;
+    args.unpop_front();
+    throw parser_error(args, string("Failed to parse positional argument '") +
+                                 args.front() + "' due to wrong positioning.");
+  }
+
+  size_t position = 0;
+};
 
 }  // namespace lyrahgames::options
