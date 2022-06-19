@@ -1,0 +1,41 @@
+# Name Parsing
+## Flags
+### Single
+$* --help >>EOE == 0
+help = true
+EOE
+$* --version >>EOE == 0
+version = true
+EOE
+$* --quiet >>EOE == 0
+quiet = true
+EOE
+$* --verbose >>EOE == 0
+verbose = true
+EOE
+
+### Multiple
+$* --help --verbose >>EOE == 0
+help = true
+verbose = true
+EOE
+$* --quiet --version --quiet >>EOE == 0
+version = true
+quiet = true
+EOE
+
+$* help 2>>EOE != 0
+Failed to parse 'help'.
+EOE
+
+$* /help 2>>EOE != 0
+Failed to parse '/help'.
+EOE
+
+$* --hel 2>>EOE != 0
+Unknown option '--hel'.
+EOE
+
+$* --helpx 2>>EOE != 0
+Unknown option '--helpx'.
+EOE

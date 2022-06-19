@@ -45,7 +45,7 @@ Unknown option '--quit'.
 EOE
 
 $* help 2>>EOE != 0
-Given option 'help' is not a flag.
+Failed to parse 'help'.
 EOE
 
 $* -h >>EOE == 0

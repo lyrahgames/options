@@ -1,0 +1,1 @@
+exe{parser}: {hxx cxx}{**} $libs testscript

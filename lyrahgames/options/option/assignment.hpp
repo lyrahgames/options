@@ -21,13 +21,18 @@ struct assignment : basic_option<czstring, N, D> {
 
   constexpr operator bool() const noexcept { return value(); }
 
-  constexpr void parse(czstring current, arg_list& args) {
-    if (*current++ != '=') {
+  constexpr bool parse(czstring current, arg_list& args) {
+    if (*current == '=') {
+      value() = ++current;
+      return true;
+    }
+    // Error handling
+    if (!*current) {
       args.unpop_front();
       throw parser_error(
           args, string("No assignment for option '") + args.front() + "'.");
     }
-    value() = current;
+    return false;
   }
 };
 

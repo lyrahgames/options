@@ -3,9 +3,11 @@
 
 namespace lyrahgames::options {
 
+/// Option type for list of options which also provides one additional value.
+/// Usage: --flag value
 template <option_identifier N, static_zstring D>
-struct appendable : basic_option<vector<czstring>, N, D> {
-  using base = basic_option<vector<czstring>, N, D>;
+struct fixed_attachment : basic_option<czstring, N, D> {
+  using base = basic_option<czstring, N, D>;
 
   using base::has_short_name;
   using base::name;
@@ -21,29 +23,44 @@ struct appendable : basic_option<vector<czstring>, N, D> {
       return result;
   }
 
-  constexpr operator bool() const noexcept { return !value().empty(); }
+  constexpr operator bool() const noexcept { return value(); }
 
   constexpr void parse(czstring current, arg_list& args, size_t position) {
-    value().push_back(current);
+    if (value()) {
+      args.unpop_front();
+      throw parser_error(args, string("Option '") + czstring(name()) +
+                                   "' cannot be set twice.");
+    }
+    value() = current;
   }
 
   constexpr bool parse(czstring current, arg_list& args) {
     if (*current) return false;
+    if (value()) {
+      args.unpop_front();
+      throw parser_error(args, string("Option '") + czstring(name()) +
+                                   "' cannot be set twice.");
+    }
     if (args.empty()) {
       args.unpop_front();
       throw parser_error(
           args, string("No given value for option '") + args.front() + "'.");
     }
-    value().push_back(args.pop_front());
+    value() = args.pop_front();
     return true;
   }
 
-  constexpr void parse(arg_list& args) requires(has_short_name()) {
+  constexpr void parse(arg_list& args) {
+    if (value()) {
+      // args.unpop_front();
+      throw parser_error(args, string("Option '") + czstring(name()) +
+                                   "' cannot be set twice.");
+    }
     if (args.empty()) {
       throw parser_error(args, string("No given value for short option '") +
                                    short_name() + "'.");
     }
-    value().push_back(args.pop_front());
+    value() = args.pop_front();
   }
 };
 

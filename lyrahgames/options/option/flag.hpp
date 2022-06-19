@@ -29,10 +29,9 @@ struct flag : basic_option<bool, N, D> {
   /// Check if option has been provided at the command line.
   constexpr operator bool() const noexcept { return value(); }
 
-  constexpr void parse(czstring current, arg_list& args) {
-    if (*current)
-      throw parser_error(args, string("Option could not be parsed!"));
-    value() = true;
+  constexpr bool parse(czstring current, arg_list& args) {
+    if (*current) return false;
+    return value() = true;
   }
 
   constexpr void parse(arg_list& args) { value() = true; }

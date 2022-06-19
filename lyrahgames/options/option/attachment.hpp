@@ -29,19 +29,15 @@ struct attachment : basic_option<czstring, N, D> {
     value() = current;
   }
 
-  constexpr void parse(czstring current, arg_list& args) {
-    if (*current) {
-      args.unpop_front();
-      throw parser_error(args, string("Failed to parse option '") +
-                                   args.front() + "'. Did you mean '" +
-                                   czstring(name()) + "'?");
-    }
+  constexpr bool parse(czstring current, arg_list& args) {
+    if (*current) return false;
     if (args.empty()) {
       args.unpop_front();
       throw parser_error(
           args, string("No given value for option '") + args.front() + "'.");
     }
     value() = args.pop_front();
+    return true;
   }
 
   constexpr void parse(arg_list& args) {

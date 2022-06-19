@@ -8,30 +8,17 @@ namespace lyrahgames::options {
 namespace generic {
 
 /// Generic option concept for option types listed inside 'option_list'.
-template <typename T>
-concept option = requires(T& x, const T& c, czstring call, arg_list& args) {
-  { T::name() } -> convertible_to<czstring>;
-  { T::description() } -> convertible_to<czstring>;
-  { T::help() } -> convertible_to<czstring>;
+template <typename option_type>
+concept option = requires(option_type& option,
+                          const option_type& const_option) {
+  { option_type::name() } -> convertible_to<czstring>;
+  { option_type::description() } -> convertible_to<czstring>;
+  { option_type::help() } -> convertible_to<czstring>;
   // Check whether option has been provided at command line.
-  { c } -> convertible_to<bool>;
+  { const_option } -> convertible_to<bool>;
   // Value acces for references and const references.
-  { x.value() } -> identical<typename T::value_type&>;
-  { c.value() } -> convertible_to<typename T::value_type>;
-  // Standard Parsing Function
-  x.parse(call, args);
-};
-
-template <typename T>
-concept has_short_name = requires(T& x, char call, arg_list& args) {
-  { T::short_name() } -> same_as<char>;
-  { x.parse(call, args) } -> convertible_to<bool>;
-};
-
-template <typename T>
-concept has_short_name2 = requires(T& x, arg_list& args) {
-  { T::short_name() } -> same_as<char>;
-  x.parse(args);
+  { option.value() } -> identical<typename option_type::value_type&>;
+  { const_option.value() } -> convertible_to<typename option_type::value_type>;
 };
 
 }  // namespace generic

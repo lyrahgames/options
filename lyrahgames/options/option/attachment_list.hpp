@@ -17,11 +17,7 @@ struct attachment_list : basic_option<vector<czstring>, N, D> {
   constexpr operator bool() const noexcept { return !value().empty(); }
 
   constexpr bool parse(czstring current, arg_list& args) {
-    if (*current) {
-      args.unpop_front();
-      throw parser_error(
-          args, string("Failed to parse option '") + args.front() + "'.");
-    }
+    if (*current) return false;
     if (args.empty()) {
       args.unpop_front();
       throw parser_error(args, string("No given value for option '") +

@@ -45,8 +45,7 @@ constexpr void parse(arg_list args,
     if (prefix_matched) continue;
     // If no prefix could be matched then we failed to parse the given argument.
     args.unpop_front();
-    throw parser_error(
-        args, string("Given option '") + args.front() + "' is not a flag.");
+    throw parser_error(args, string("Failed to parse '") + args.front() + "'.");
   }
 }
 

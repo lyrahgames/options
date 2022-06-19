@@ -15,9 +15,9 @@ struct position {
 constexpr size_t undefined = -1;
 
 template <position... p>
-struct position_list {
-  static constexpr auto size() noexcept -> size_t { return (p.count + ...); }
-};
+struct position_list {};
+
+namespace detail {
 
 template <position p, position... q>
 constexpr bool visit(size_t x, auto&& f, size_t last = 0) {
@@ -47,10 +47,24 @@ struct visit_helper<position_list<p...>> {
   }
 };
 
+}  // namespace detail
+
 template <typename T>
 constexpr bool visit(size_t x, auto&& f) {
-  return visit_helper<T>{}(x, forward<decltype(f)>(f));
+  return detail::visit_helper<T>{}(x, forward<decltype(f)>(f));
 }
+
+namespace generic {
+
+template <typename option_type>
+concept positional_parsable = requires(option_type& option,
+                                       czstring current,
+                                       arg_list& args,
+                                       size_t position) {
+  option.parse(current, args, position);
+};
+
+}  // namespace generic
 
 template <typename position_schedule>
 struct positional_parser {
