@@ -37,6 +37,8 @@ option_list<  //
     options{};
 using positioning = position_list<"output", {"input", undefined}>;
 
+static_assert(is_valid_positioning<positioning, decltype(options)>::value);
+
 // Initialize the application by parsing its command-line arguments.
 void init(int argc, char* argv[]) {
   try {

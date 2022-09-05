@@ -66,6 +66,14 @@ concept positional_parsable = requires(option_type& option,
 
 }  // namespace generic
 
+template <typename position_schedule, instance::option_list options>
+struct is_valid_positioning : false_type {};
+template <instance::option_list options, position... p>
+requires(generic::positional_parsable<
+         decay_t<decltype(option<p.name>(options{}))>>&&...)  //
+    struct is_valid_positioning<position_list<p...>, options> : true_type {
+};
+
 template <typename position_schedule>
 struct positional_parser {
   template <instance::option_list options>
