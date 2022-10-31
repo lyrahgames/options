@@ -15,4 +15,4 @@ depends: * bpkg >= 0.14.0
 
 # Concerning compatibility with other lyrahgames libraries,
 # allowing to use alternative upgraded versions may be better.
-depends: lyrahgames-xstd >= 0.1.5
+depends: lyrahgames-xstd >= 0.1.11
